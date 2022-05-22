@@ -9,8 +9,23 @@ const carousel = document.getElementById("carousel");
 const prevButton = document.getElementById("prev-button");
 const nextButton = document.getElementById("next-button");
 
-let startItemIndex = 1,
-  endItemIndex = 5;
+let startItemIndex = 1;
+
+const focusedItemIndexProxy = new Proxy(
+  { value: 3 },
+  {
+    set(target, prop, newValue, _receiver) {
+      if (prop != "value") {
+        return false;
+      }
+
+      updateFocusedItem(target.value, false);
+      target.value = newValue;
+      updateFocusedItem(newValue);
+      return true;
+    },
+  }
+);
 
 const appendCarouselItemsHTML = (numOfItems) => {
   for (let i = 2; i <= numOfItems; i++) {
@@ -19,9 +34,9 @@ const appendCarouselItemsHTML = (numOfItems) => {
 };
 appendCarouselItemsHTML(15);
 
-const updateFocusedItem = (makeFocused = true) => {
+const updateFocusedItem = (itemIndex, makeFocused = true) => {
   const selectorString =
-    "#carousel > .carousel-item:nth-child(" + (startItemIndex + 2) + ")";
+    "#carousel > .carousel-item:nth-child(" + itemIndex + ")";
   const currentFocusedItem = document.querySelector(selectorString);
   if (makeFocused) {
     currentFocusedItem.classList.add("focused-item");
@@ -29,6 +44,7 @@ const updateFocusedItem = (makeFocused = true) => {
     currentFocusedItem.classList.remove("focused-item");
   }
 };
+updateFocusedItem(3);
 
 // Use this function instead of carousel.scrollLeft
 // because the scrollLeft value is not completely updated until the scroll action has finished.
@@ -38,8 +54,6 @@ const getScrollLeftValue = () => {
   return (startItemIndex - 1) * (carouselItemWidth + carouselItemGap);
 };
 
-updateFocusedItem();
-
 nextButton.onclick = () => {
   const availableSpaceRight =
     carousel.scrollWidth - carousel.scrollLeft - carouselWidth;
@@ -47,10 +61,8 @@ nextButton.onclick = () => {
     availableSpaceRight / (carouselItemWidth + carouselItemGap);
   const numOfScrollItems =
     numOfScrollableItemsRight > 5 ? 5 : numOfScrollableItemsRight;
-  updateFocusedItem(false);
   startItemIndex += numOfScrollItems;
-  endItemIndex += numOfScrollItems;
-  updateFocusedItem();
+  focusedItemIndexProxy.value = startItemIndex + 2;
 
   carousel.scrollBy(slideDistance, 0);
   prevButton.style.display = "block";
@@ -65,10 +77,8 @@ prevButton.onclick = () => {
     carousel.scrollLeft / (carouselItemWidth + carouselItemGap);
   const numOfScrollItems =
     numOfScrollableItemsLeft > 5 ? 5 : numOfScrollableItemsLeft;
-  updateFocusedItem(false);
   startItemIndex -= numOfScrollItems;
-  endItemIndex -= numOfScrollItems;
-  updateFocusedItem();
+  focusedItemIndexProxy.value = startItemIndex + 2;
 
   carousel.scrollBy(-slideDistance, 0);
   nextButton.style.display = "block";
@@ -76,3 +86,13 @@ prevButton.onclick = () => {
     prevButton.style.display = "none";
   }
 };
+
+document.querySelectorAll(".carousel-item").forEach((carouselItem) => {
+  carouselItem.addEventListener("mouseover", () => {
+    const carouselItemIndex = Array.prototype.indexOf.call(
+      carousel.children,
+      carouselItem
+    );
+    focusedItemIndexProxy.value = carouselItemIndex + 1;
+  });
+});
