@@ -8,6 +8,7 @@ const carouselWidth =
   2 * carouselSmallItemWidth +
   carouselFocusedItemWidth;
 const slideDistance = carouselItemWidth + carouselItemGap;
+const slideTime = 100; // ms
 let isSlideRight = true;
 
 const carousel = document.getElementById("carousel");
@@ -82,22 +83,26 @@ const getScrollLeftValue = () => {
 
 nextButton.onclick = () => {
   isSlideRight = true;
-  focusedItemIndexProxy.value += 1;
-  carousel.scrollBy(slideDistance, 0);
-
   prevButton.style.display = "block";
-  if (getScrollLeftValue() + carouselWidth >= carousel.scrollWidth) {
-    nextButton.style.display = "none";
-  }
+  carousel.scrollBy(slideDistance, 0);
+  const timerId = setTimeout(() => {
+    focusedItemIndexProxy.value += 1;
+    if (getScrollLeftValue() + carouselWidth >= carousel.scrollWidth) {
+      nextButton.style.display = "none";
+    }
+    clearTimeout(timerId);
+  }, slideTime);
 };
 
 prevButton.onclick = () => {
   isSlideRight = false;
-  focusedItemIndexProxy.value -= 1;
-  carousel.scrollBy(-slideDistance, 0);
-
   nextButton.style.display = "block";
-  if (getScrollLeftValue() == 0) {
-    prevButton.style.display = "none";
-  }
+  carousel.scrollBy(-slideDistance, 0);
+  const timerId = setTimeout(() => {
+    focusedItemIndexProxy.value -= 1;
+    if (getScrollLeftValue() == 0) {
+      prevButton.style.display = "none";
+    }
+    clearTimeout(timerId);
+  }, slideTime);
 };
