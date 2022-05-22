@@ -51,6 +51,10 @@ body {
     opacity: 0.6;
 }
 
+.hide {
+    visibility: hidden;
+}
+
 .arrow {
     width: 15px;
     height: 15px;

@@ -8,6 +8,7 @@ const carouselWidth =
   2 * carouselSmallItemWidth +
   carouselFocusedItemWidth;
 const slideDistance = carouselItemWidth + carouselItemGap;
+let isSlideRight = true;
 
 const carousel = document.getElementById("carousel");
 const prevButton = document.getElementById("prev-button");
@@ -49,10 +50,20 @@ const updateFocusedItem = (itemIndex, makeFocused = true) => {
   );
   if (makeFocused) {
     focusedCarouselItem.classList.add("focused-item");
+    if (isSlideRight) {
+      smallCarouselItemRight.classList.remove("hide");
+    } else {
+      smallCarouselItemLeft.classList.remove("hide");
+    }
     smallCarouselItemLeft.classList.add("small-item");
     smallCarouselItemRight.classList.add("small-item");
   } else {
     focusedCarouselItem.classList.remove("focused-item");
+    if (isSlideRight) {
+      smallCarouselItemLeft.classList.add("hide");
+    } else {
+      smallCarouselItemRight.classList.add("hide");
+    }
     smallCarouselItemLeft.classList.remove("small-item");
     smallCarouselItemRight.classList.remove("small-item");
   }
@@ -70,6 +81,7 @@ const getScrollLeftValue = () => {
 };
 
 nextButton.onclick = () => {
+  isSlideRight = true;
   focusedItemIndexProxy.value += 1;
   carousel.scrollBy(slideDistance, 0);
 
@@ -80,6 +92,7 @@ nextButton.onclick = () => {
 };
 
 prevButton.onclick = () => {
+  isSlideRight = false;
   focusedItemIndexProxy.value -= 1;
   carousel.scrollBy(-slideDistance, 0);
 
