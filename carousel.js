@@ -10,6 +10,7 @@ const carouselWidth =
 const slideDistance = carouselItemWidth + carouselItemGap;
 const slideTime = 100; // ms
 let isSlideRight = true;
+let prevClickTime = Date.now();
 
 const carousel = document.getElementById("carousel");
 const prevButton = document.getElementById("prev-button");
@@ -82,6 +83,10 @@ const getScrollLeftValue = () => {
 };
 
 nextButton.onclick = () => {
+  if (Date.now() - prevClickTime < 200) {
+    return;
+  }
+  prevClickTime = Date.now();
   isSlideRight = true;
   prevButton.style.display = "block";
   carousel.scrollBy(slideDistance, 0);
@@ -95,6 +100,10 @@ nextButton.onclick = () => {
 };
 
 prevButton.onclick = () => {
+  if (Date.now() - prevClickTime < 200) {
+    return;
+  }
+  prevClickTime = Date.now();
   isSlideRight = false;
   nextButton.style.display = "block";
   carousel.scrollBy(-slideDistance, 0);
