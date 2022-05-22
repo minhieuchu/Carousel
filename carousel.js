@@ -1,15 +1,17 @@
 const carouselItemWidth = 150;
 const carouselFocusedItemWidth = 200;
+const carouselSmallItemWidth = 115;
 const carouselItemGap = 30;
 const carouselWidth =
-  4 * (carouselItemWidth + carouselItemGap) + carouselFocusedItemWidth;
-const slideDistance = 5 * (carouselItemWidth + carouselItemGap);
+  4 * carouselItemGap +
+  2 * carouselItemWidth +
+  2 * carouselSmallItemWidth +
+  carouselFocusedItemWidth;
+const slideDistance = carouselItemWidth + carouselItemGap;
 
 const carousel = document.getElementById("carousel");
 const prevButton = document.getElementById("prev-button");
 const nextButton = document.getElementById("next-button");
-
-let startItemIndex = 1;
 
 const focusedItemIndexProxy = new Proxy(
   { value: 3 },
@@ -18,7 +20,6 @@ const focusedItemIndexProxy = new Proxy(
       if (prop != "value") {
         return false;
       }
-
       updateFocusedItem(target.value, false);
       target.value = newValue;
       updateFocusedItem(newValue);
@@ -32,16 +33,28 @@ const appendCarouselItemsHTML = (numOfItems) => {
     carousel.innerHTML += '<div class="carousel-item">' + i + "</div>";
   }
 };
-appendCarouselItemsHTML(15);
+appendCarouselItemsHTML(9);
 
 const updateFocusedItem = (itemIndex, makeFocused = true) => {
-  const selectorString =
-    "#carousel > .carousel-item:nth-child(" + itemIndex + ")";
-  const currentFocusedItem = document.querySelector(selectorString);
+  const getSelectorString = (index) =>
+    "#carousel > .carousel-item:nth-child(" + index + ")";
+  const focusedCarouselItem = document.querySelector(
+    getSelectorString(itemIndex)
+  );
+  const smallCarouselItemLeft = document.querySelector(
+    getSelectorString(itemIndex - 2)
+  );
+  const smallCarouselItemRight = document.querySelector(
+    getSelectorString(itemIndex + 2)
+  );
   if (makeFocused) {
-    currentFocusedItem.classList.add("focused-item");
+    focusedCarouselItem.classList.add("focused-item");
+    smallCarouselItemLeft.classList.add("small-item");
+    smallCarouselItemRight.classList.add("small-item");
   } else {
-    currentFocusedItem.classList.remove("focused-item");
+    focusedCarouselItem.classList.remove("focused-item");
+    smallCarouselItemLeft.classList.remove("small-item");
+    smallCarouselItemRight.classList.remove("small-item");
   }
 };
 updateFocusedItem(3);
@@ -51,48 +64,27 @@ updateFocusedItem(3);
 // At the moment, there is not a standard method to determine if the scroll has finished.
 // A common workaround is to use a timer (~500ms) to wait for the completion of the scroll action.
 const getScrollLeftValue = () => {
-  return (startItemIndex - 1) * (carouselItemWidth + carouselItemGap);
+  return (
+    (focusedItemIndexProxy.value - 3) * (carouselItemWidth + carouselItemGap)
+  );
 };
 
 nextButton.onclick = () => {
-  const availableSpaceRight =
-    carousel.scrollWidth - carousel.scrollLeft - carouselWidth;
-  const numOfScrollableItemsRight =
-    availableSpaceRight / (carouselItemWidth + carouselItemGap);
-  const numOfScrollItems =
-    numOfScrollableItemsRight > 5 ? 5 : numOfScrollableItemsRight;
-  startItemIndex += numOfScrollItems;
-  focusedItemIndexProxy.value = startItemIndex + 2;
-
+  focusedItemIndexProxy.value += 1;
   carousel.scrollBy(slideDistance, 0);
-  prevButton.style.display = "block";
 
+  prevButton.style.display = "block";
   if (getScrollLeftValue() + carouselWidth >= carousel.scrollWidth) {
     nextButton.style.display = "none";
   }
 };
 
 prevButton.onclick = () => {
-  const numOfScrollableItemsLeft =
-    carousel.scrollLeft / (carouselItemWidth + carouselItemGap);
-  const numOfScrollItems =
-    numOfScrollableItemsLeft > 5 ? 5 : numOfScrollableItemsLeft;
-  startItemIndex -= numOfScrollItems;
-  focusedItemIndexProxy.value = startItemIndex + 2;
-
+  focusedItemIndexProxy.value -= 1;
   carousel.scrollBy(-slideDistance, 0);
+
   nextButton.style.display = "block";
   if (getScrollLeftValue() == 0) {
     prevButton.style.display = "none";
   }
 };
-
-document.querySelectorAll(".carousel-item").forEach((carouselItem) => {
-  carouselItem.addEventListener("mouseover", () => {
-    const carouselItemIndex = Array.prototype.indexOf.call(
-      carousel.children,
-      carouselItem
-    );
-    focusedItemIndexProxy.value = carouselItemIndex + 1;
-  });
-});

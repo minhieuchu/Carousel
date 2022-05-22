@@ -15,7 +15,7 @@ body {
     align-items: center;
     gap: 30px;
     overflow-x: hidden;
-    width: 920px;
+    width: 850px;
     margin: 0 auto;
     scroll-behavior: smooth;
     scrollbar-width: none;
@@ -36,11 +36,19 @@ body {
     justify-content: center;
     color: whitesmoke;
     font-size: 32px;
+    opacity: 0.8;
 }
 
 #carousel>.focused-item {
     height: 200px;
     min-width: 200px;
+    opacity: 1;
+}
+
+#carousel>.small-item {
+    height: 115px;
+    min-width: 115px;
+    opacity: 0.6;
 }
 
 .arrow {
