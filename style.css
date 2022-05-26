@@ -17,6 +17,8 @@ body {
     overflow-x: hidden;
     width: 850px;
     margin: 0 auto;
+    padding-top: 50px;
+    padding-bottom: 50px;
     scroll-behavior: smooth;
     scrollbar-width: none;
 }
@@ -29,14 +31,8 @@ body {
     width: 150px;
     height: 150px;
     min-width: 150px;
-    background-color: cadetblue;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: whitesmoke;
-    font-size: 32px;
-    opacity: 0.8;
+    perspective: 1000px;
+    opacity: 0.85;
 }
 
 #carousel>.focused-item {
@@ -49,6 +45,46 @@ body {
     height: 115px;
     min-width: 115px;
     opacity: 0.6;
+}
+
+#carousel>.carousel-item>.cards-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 1s;
+    transform-style: preserve-3d;
+}
+
+#carousel>.carousel-item>.cards-container:hover {
+    transform: translateY(-20px) rotateY(180deg);
+}
+
+#carousel>.carousel-item>.cards-container>.front-card,
+#carousel>.carousel-item>.cards-container>.back-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    font-size: 32px;
+    backface-visibility: hidden;
+}
+
+#carousel>.carousel-item>.cards-container>.front-card {
+    background-color: cadetblue;
+    color: whitesmoke;
+}
+
+#carousel>.carousel-item>.cards-container>.back-card {
+    transform: rotateY(180deg);
+    background-color: #ffc107;
+    color: whitesmoke;
+}
+
+#carousel>.small-item>.cards-container>div.back-card {
+    font-size: 24px;
 }
 
 .hide {

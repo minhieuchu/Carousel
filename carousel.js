@@ -31,13 +31,6 @@ const focusedItemIndexProxy = new Proxy(
   }
 );
 
-const appendCarouselItemsHTML = (numOfItems) => {
-  for (let i = 2; i <= numOfItems; i++) {
-    carousel.innerHTML += '<div class="carousel-item">' + i + "</div>";
-  }
-};
-appendCarouselItemsHTML(9);
-
 const updateFocusedItem = (itemIndex, makeFocused = true) => {
   const getSelectorString = (index) =>
     "#carousel > .carousel-item:nth-child(" + index + ")";
