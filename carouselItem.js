@@ -15,6 +15,7 @@ const itemStyle = `
     }
 
     .small-item {
+        width: 115px;
         height: 115px;
         min-width: 115px;
         opacity: 0.6;

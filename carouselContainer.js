@@ -9,76 +9,13 @@ const carouselWidth =
   carouselFocusedItemWidth;
 const slideDistance = carouselItemWidth + carouselItemGap;
 const slideTime = 100; // ms
-let isSlideRight = true;
-let prevClickTime = Date.now();
-
-const carousel = document.getElementById("carousel");
-const prevButton = document.getElementById("prev-button");
-const nextButton = document.getElementById("next-button");
-
-const focusedItemIndexProxy = new Proxy(
-  { value: 3 },
-  {
-    set(target, prop, newValue, _receiver) {
-      if (prop != "value") {
-        return false;
-      }
-      updateFocusedItem(target.value, false);
-      target.value = newValue;
-      updateFocusedItem(newValue);
-      return true;
-    },
-  }
-);
-
-// const updateFocusedItem = (itemIndex, makeFocused = true) => {
-//   const getSelectorString = (index) =>
-//     "#carousel > .carousel-item:nth-child(" + index + ")";
-//   const focusedCarouselItem = document.querySelector(
-//     getSelectorString(itemIndex)
-//   );
-//   const smallCarouselItemLeft = document.querySelector(
-//     getSelectorString(itemIndex - 2)
-//   );
-//   const smallCarouselItemRight = document.querySelector(
-//     getSelectorString(itemIndex + 2)
-//   );
-//   if (makeFocused) {
-//     focusedCarouselItem.classList.add("focused-item");
-//     if (isSlideRight) {
-//       smallCarouselItemRight.classList.remove("hide");
-//     } else {
-//       smallCarouselItemLeft.classList.remove("hide");
-//     }
-//     smallCarouselItemLeft.classList.add("small-item");
-//     smallCarouselItemRight.classList.add("small-item");
-//   } else {
-//     focusedCarouselItem.classList.remove("focused-item");
-//     if (isSlideRight) {
-//       smallCarouselItemLeft.classList.add("hide");
-//     } else {
-//       smallCarouselItemRight.classList.add("hide");
-//     }
-//     smallCarouselItemLeft.classList.remove("small-item");
-//     smallCarouselItemRight.classList.remove("small-item");
-//   }
-// };
-// updateFocusedItem(3);
-
-// Use this function instead of carousel.scrollLeft
-// because the scrollLeft value is not completely updated until the scroll action has finished.
-// At the moment, there is not a standard method to determine if the scroll has finished.
-// A common workaround is to use a timer (~500ms) to wait for the completion of the scroll action.
-// const getScrollLeftValue = () => {
-//   return (
-//     (focusedItemIndexProxy.value - 3) * (carouselItemWidth + carouselItemGap)
-//   );
-// };
 
 const containerStyle = `
   <style>
     #carousel-container {
         position: relative;
+        width: 80%;
+        margin: 0 auto;
     }
 
     #carousel {
@@ -86,7 +23,7 @@ const containerStyle = `
         align-items: center;
         gap: 30px;
         overflow-x: hidden;
-        width: 870px;
+        width: 850px;
         margin: 0 auto;
         padding-top: 50px;
         padding-bottom: 50px;
@@ -151,6 +88,7 @@ containerTemplate.innerHTML =
 class CarouselContainer extends HTMLElement {
   constructor() {
     super();
+    const _self = this;
     this.attachShadow({ mode: "open" });
     this.shadowRoot.appendChild(containerTemplate.content.cloneNode(true));
     this.prevClickTime = Date.now();
@@ -158,6 +96,20 @@ class CarouselContainer extends HTMLElement {
     this.nextButton = this.shadowRoot.getElementById("next-button");
     this.isSlideRight = true;
     this.carousel = this.shadowRoot.getElementById("carousel");
+    this.focusedItemIndexProxy = new Proxy(
+      { value: 3 },
+      {
+        set(target, prop, newValue, _receiver) {
+          if (prop != "value") {
+            return false;
+          }
+          _self.updateFocusedItem(target.value, false);
+          target.value = newValue;
+          _self.updateFocusedItem(newValue);
+          return true;
+        },
+      }
+    );
   }
   connectedCallback() {
     this.prevButton.onclick = () => {
@@ -168,15 +120,14 @@ class CarouselContainer extends HTMLElement {
       this.isSlideRight = false;
       this.nextButton.style.display = "block";
       this.carousel.scrollBy(-slideDistance, 0);
-      //   const timerId = setTimeout(() => {
-      //     focusedItemIndexProxy.value -= 1;
-      //     if (getScrollLeftValue() == 0) {
-      //       prevButton.style.display = "none";
-      //     }
-      //     clearTimeout(timerId);
-      //   }, slideTime);
+      const timerId = setTimeout(() => {
+        this.focusedItemIndexProxy.value -= 1;
+        if (this.getScrollLeftValue() == 0) {
+          this.prevButton.style.display = "none";
+        }
+        clearTimeout(timerId);
+      }, slideTime);
     };
-
     this.nextButton.onclick = () => {
       if (Date.now() - this.prevClickTime < 200) {
         return;
@@ -185,14 +136,82 @@ class CarouselContainer extends HTMLElement {
       this.isSlideRight = true;
       this.prevButton.style.display = "block";
       this.carousel.scrollBy(slideDistance, 0);
-      // const timerId = setTimeout(() => {
-      //   focusedItemIndexProxy.value += 1;
-      //   if (getScrollLeftValue() + carouselWidth >= carousel.scrollWidth) {
-      //     nextButton.style.display = "none";
-      //   }
-      //   clearTimeout(timerId);
-      // }, slideTime);
+      const timerId = setTimeout(() => {
+        this.focusedItemIndexProxy.value += 1;
+        if (
+          this.getScrollLeftValue() + carouselWidth >=
+          this.carousel.scrollWidth
+        ) {
+          this.nextButton.style.display = "none";
+        }
+        clearTimeout(timerId);
+      }, slideTime);
     };
+
+    this.childListObserver = new MutationObserver(
+      this.initFocusedCarouselItem.bind(this)
+    );
+    this.childListObserver.observe(this, { childList: true });
+  }
+  initFocusedCarouselItem() {
+    if (this.childElementCount < this.focusedItemIndexProxy.value + 2) {
+      return;
+    }
+    this.focusedItemIndexProxy.value = 3;
+  }
+  updateFocusedItem(itemIndex, makeFocused = true) {
+    const focusedCarouselItem = this.children.item(itemIndex - 1);
+    const smallCarouselItemLeft = this.children.item(itemIndex - 3);
+    const smallCarouselItemRight = this.children.item(itemIndex + 1);
+    if (makeFocused) {
+      focusedCarouselItem.shadowRoot
+        .querySelector(".carousel-item")
+        .classList.add("focused-item");
+      if (this.isSlideRight) {
+        smallCarouselItemRight.shadowRoot
+          .querySelector(".carousel-item")
+          .classList.remove("hide");
+      } else {
+        smallCarouselItemLeft.shadowRoot
+          .querySelector(".carousel-item")
+          .classList.remove("hide");
+      }
+      smallCarouselItemLeft.shadowRoot
+        .querySelector(".carousel-item")
+        .classList.add("small-item");
+      smallCarouselItemRight.shadowRoot
+        .querySelector(".carousel-item")
+        .classList.add("small-item");
+    } else {
+      focusedCarouselItem.shadowRoot
+        .querySelector(".carousel-item")
+        .classList.remove("focused-item");
+      if (this.isSlideRight) {
+        smallCarouselItemLeft.shadowRoot
+          .querySelector(".carousel-item")
+          .classList.add("hide");
+      } else {
+        smallCarouselItemRight.shadowRoot
+          .querySelector(".carousel-item")
+          .classList.add("hide");
+      }
+      smallCarouselItemLeft.shadowRoot
+        .querySelector(".carousel-item")
+        .classList.remove("small-item");
+      smallCarouselItemRight.shadowRoot
+        .querySelector(".carousel-item")
+        .classList.remove("small-item");
+    }
+  }
+  // Use this function instead of carousel.scrollLeft
+  // because the scrollLeft value is not completely updated until the scroll action has finished.
+  // At the moment, there is not a standard method to determine if the scroll has finished.
+  // A common workaround is to use a timer (~500ms) to wait for the completion of the scroll action.
+  getScrollLeftValue() {
+    return (
+      (this.focusedItemIndexProxy.value - 3) *
+      (carouselItemWidth + carouselItemGap)
+    );
   }
 }
 
