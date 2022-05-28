@@ -75,40 +75,6 @@ const focusedItemIndexProxy = new Proxy(
 //   );
 // };
 
-// nextButton.onclick = () => {
-//   if (Date.now() - prevClickTime < 200) {
-//     return;
-//   }
-//   prevClickTime = Date.now();
-//   isSlideRight = true;
-//   prevButton.style.display = "block";
-//   carousel.scrollBy(slideDistance, 0);
-//   const timerId = setTimeout(() => {
-//     focusedItemIndexProxy.value += 1;
-//     if (getScrollLeftValue() + carouselWidth >= carousel.scrollWidth) {
-//       nextButton.style.display = "none";
-//     }
-//     clearTimeout(timerId);
-//   }, slideTime);
-// };
-
-// prevButton.onclick = () => {
-//   if (Date.now() - prevClickTime < 200) {
-//     return;
-//   }
-//   prevClickTime = Date.now();
-//   isSlideRight = false;
-//   nextButton.style.display = "block";
-//   carousel.scrollBy(-slideDistance, 0);
-//   const timerId = setTimeout(() => {
-//     focusedItemIndexProxy.value -= 1;
-//     if (getScrollLeftValue() == 0) {
-//       prevButton.style.display = "none";
-//     }
-//     clearTimeout(timerId);
-//   }, slideTime);
-// };
-
 const containerStyle = `
   <style>
     #carousel-container {
@@ -183,12 +149,50 @@ containerTemplate.innerHTML =
   </div>`;
 
 class CarouselContainer extends HTMLElement {
-  // connectedCallback() {}
   constructor() {
     super();
-    console.log(this.children.length);
     this.attachShadow({ mode: "open" });
     this.shadowRoot.appendChild(containerTemplate.content.cloneNode(true));
+    this.prevClickTime = Date.now();
+    this.prevButton = this.shadowRoot.getElementById("prev-button");
+    this.nextButton = this.shadowRoot.getElementById("next-button");
+    this.isSlideRight = true;
+    this.carousel = this.shadowRoot.getElementById("carousel");
+  }
+  connectedCallback() {
+    this.prevButton.onclick = () => {
+      if (Date.now() - this.prevClickTime < 200) {
+        return;
+      }
+      this.prevClickTime = Date.now();
+      this.isSlideRight = false;
+      this.nextButton.style.display = "block";
+      this.carousel.scrollBy(-slideDistance, 0);
+      //   const timerId = setTimeout(() => {
+      //     focusedItemIndexProxy.value -= 1;
+      //     if (getScrollLeftValue() == 0) {
+      //       prevButton.style.display = "none";
+      //     }
+      //     clearTimeout(timerId);
+      //   }, slideTime);
+    };
+
+    this.nextButton.onclick = () => {
+      if (Date.now() - this.prevClickTime < 200) {
+        return;
+      }
+      this.prevClickTime = Date.now();
+      this.isSlideRight = true;
+      this.prevButton.style.display = "block";
+      this.carousel.scrollBy(slideDistance, 0);
+      // const timerId = setTimeout(() => {
+      //   focusedItemIndexProxy.value += 1;
+      //   if (getScrollLeftValue() + carouselWidth >= carousel.scrollWidth) {
+      //     nextButton.style.display = "none";
+      //   }
+      //   clearTimeout(timerId);
+      // }, slideTime);
+    };
   }
 }
 
