@@ -1,62 +1,31 @@
 <html>
   <header>
-    <link rel="stylesheet" href="style.css" />
+    <script src="carouselContainer.js"></script>
+    <script src="carouselItem.js"></script>
+    <style>
+      body {
+        background-color: black;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .container {
+        margin: 0 auto;
+      }
+    </style>
   </header>
   <body>
-    <div id="carousel-container">
-      <div id="prev-button" class="arrow left-arrow"></div>
-      <div id="next-button" class="arrow right-arrow"></div>
-      <div id="carousel">
-        <div class="carousel-item">
-          <div class="cards-container">
-            <div class="front-card">1</div>
-            <div class="back-card">Back card</div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="cards-container">
-            <div class="front-card">2</div>
-            <div class="back-card">Back card</div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="cards-container">
-            <div class="front-card">3</div>
-            <div class="back-card">Back card</div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="cards-container">
-            <div class="front-card">4</div>
-            <div class="back-card">Back card</div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="cards-container">
-            <div class="front-card">5</div>
-            <div class="back-card">Back card</div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="cards-container">
-            <div class="front-card">6</div>
-            <div class="back-card">Back card</div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="cards-container">
-            <div class="front-card">7</div>
-            <div class="back-card">Back card</div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="cards-container">
-            <div class="front-card">8</div>
-            <div class="back-card">Back card</div>
-          </div>
-        </div>
-      </div>
+    <div class="container">
+      <carousel-container>
+        <carousel-item front="1" back="Back card"></carousel-item>
+        <carousel-item front="2" back="Back card"></carousel-item>
+        <carousel-item front="3" back="Back card"></carousel-item>
+        <carousel-item front="4" back="Back card"></carousel-item>
+        <carousel-item front="5" back="Back card"></carousel-item>
+        <carousel-item front="6" back="Back card"></carousel-item>
+        <carousel-item front="7" back="Back card"></carousel-item>
+      </carousel-container>
     </div>
-    <script src="carousel.js"></script>
   </body>
 </html>
