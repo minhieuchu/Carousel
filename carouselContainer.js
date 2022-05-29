@@ -160,47 +160,34 @@ class CarouselContainer extends HTMLElement {
     this.focusedItemIndexProxy.value = 3;
   }
   updateFocusedItem(itemIndex, makeFocused = true) {
-    const focusedCarouselItem = this.children.item(itemIndex - 1);
-    const smallCarouselItemLeft = this.children.item(itemIndex - 3);
-    const smallCarouselItemRight = this.children.item(itemIndex + 1);
+    const focusedCarouselItemHtml = this.children
+      .item(itemIndex - 1)
+      .shadowRoot.querySelector(".carousel-item");
+    const smallCarouselItemLeftHtml = this.children
+      .item(itemIndex - 3)
+      .shadowRoot.querySelector(".carousel-item");
+    const smallCarouselItemRightHtml = this.children
+      .item(itemIndex + 1)
+      .shadowRoot.querySelector(".carousel-item");
+
     if (makeFocused) {
-      focusedCarouselItem.shadowRoot
-        .querySelector(".carousel-item")
-        .classList.add("focused-item");
+      focusedCarouselItemHtml.classList.add("focused-item");
       if (this.isSlideRight) {
-        smallCarouselItemRight.shadowRoot
-          .querySelector(".carousel-item")
-          .classList.remove("hide");
+        smallCarouselItemRightHtml.classList.remove("hide");
       } else {
-        smallCarouselItemLeft.shadowRoot
-          .querySelector(".carousel-item")
-          .classList.remove("hide");
+        smallCarouselItemLeftHtml.classList.remove("hide");
       }
-      smallCarouselItemLeft.shadowRoot
-        .querySelector(".carousel-item")
-        .classList.add("small-item");
-      smallCarouselItemRight.shadowRoot
-        .querySelector(".carousel-item")
-        .classList.add("small-item");
+      smallCarouselItemLeftHtml.classList.add("small-item");
+      smallCarouselItemRightHtml.classList.add("small-item");
     } else {
-      focusedCarouselItem.shadowRoot
-        .querySelector(".carousel-item")
-        .classList.remove("focused-item");
+      focusedCarouselItemHtml.classList.remove("focused-item");
       if (this.isSlideRight) {
-        smallCarouselItemLeft.shadowRoot
-          .querySelector(".carousel-item")
-          .classList.add("hide");
+        smallCarouselItemLeftHtml.classList.add("hide");
       } else {
-        smallCarouselItemRight.shadowRoot
-          .querySelector(".carousel-item")
-          .classList.add("hide");
+        smallCarouselItemRightHtml.classList.add("hide");
       }
-      smallCarouselItemLeft.shadowRoot
-        .querySelector(".carousel-item")
-        .classList.remove("small-item");
-      smallCarouselItemRight.shadowRoot
-        .querySelector(".carousel-item")
-        .classList.remove("small-item");
+      smallCarouselItemLeftHtml.classList.remove("small-item");
+      smallCarouselItemRightHtml.classList.remove("small-item");
     }
   }
   // Use this function instead of carousel.scrollLeft
