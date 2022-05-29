@@ -65,6 +65,7 @@ const containerStyle = `
 
     #prev-button {
         left: -30px;
+        display: none;
     }
 
     #next-button {
