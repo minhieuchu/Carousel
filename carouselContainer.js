@@ -153,6 +153,9 @@ class CarouselContainer extends HTMLElement {
       this.initFocusedCarouselItem.bind(this)
     );
     this.childListObserver.observe(this, { childList: true });
+    setTimeout(() => {
+      this.focusedItemIndexProxy.value = 3;
+    }, 100);
   }
   initFocusedCarouselItem() {
     if (this.childElementCount < this.focusedItemIndexProxy.value + 2) {
