@@ -14,7 +14,7 @@ const containerStyle = `
   <style>
     #carousel-container {
         position: relative;
-        width: 80%;
+        width: 850px;
         margin: 0 auto;
     }
 
@@ -64,12 +64,12 @@ const containerStyle = `
     }
 
     #prev-button {
-        left: -30px;
+        left: -50px;
         display: none;
     }
 
     #next-button {
-        right: -30px;
+        right: -50px;
     }
   </style>
 `;
