@@ -87,4 +87,4 @@ class CarouselItem extends HTMLElement {
   }
 }
 
-window.customElements.define("carousel-item", CarouselItem);
+export default CarouselItem;

@@ -203,4 +203,4 @@ class CarouselContainer extends HTMLElement {
   }
 }
 
-window.customElements.define("carousel-container", CarouselContainer);
+export default CarouselContainer;
