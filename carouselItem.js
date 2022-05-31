@@ -60,6 +60,10 @@ const itemStyle = `
     .small-item>.cards-container>div.back-card {
         font-size: 24px;
     }
+
+    .hide {
+        visibility: hidden;
+    }
 </style>
 `;
 const itemTemplate = document.createElement("template");

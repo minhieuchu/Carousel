@@ -35,10 +35,6 @@ const containerStyle = `
         height: 0;
     }
 
-    .hide {
-        visibility: hidden;
-    }
-
     .arrow {
         width: 15px;
         height: 15px;
@@ -176,11 +172,8 @@ class CarouselContainer extends HTMLElement {
 
     if (makeFocused) {
       focusedCarouselItemHtml.classList.add("focused-item");
-      if (this.isSlideRight) {
-        smallCarouselItemRightHtml.classList.remove("hide");
-      } else {
-        smallCarouselItemLeftHtml.classList.remove("hide");
-      }
+      smallCarouselItemRightHtml.classList.remove("hide");
+      smallCarouselItemLeftHtml.classList.remove("hide");
       smallCarouselItemLeftHtml.classList.add("small-item");
       smallCarouselItemRightHtml.classList.add("small-item");
     } else {
