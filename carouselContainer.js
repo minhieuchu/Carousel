@@ -205,21 +205,31 @@ class CarouselContainer extends HTMLElement {
       (this.carouselItemWidth + this.carouselItemGap)
     );
   }
+  updateCssPropertyValues() {
+    const constructedStyleSheet = new CSSStyleSheet();
+    const styleSheetContent = `
+      #carousel-container { width: ${this.carouselWidth}px }
+      #carousel { gap: ${this.carouselItemGap}px }
+    `;
+    constructedStyleSheet.replaceSync(styleSheetContent);
+    this.shadowRoot.adoptedStyleSheets = [constructedStyleSheet];
+  }
   updateCarouselSize() {
     const containerWidth = this.parentElement.offsetWidth;
-    console.log(containerWidth);
     if (containerWidth >= 960) {
       this.carouselItemWidth = 150;
       this.carouselFocusedItemWidth = 200;
       this.carouselSmallItemWidth = 115;
       this.carouselItemGap = 30;
       this.calculateCarouselSizeParameters();
+      this.updateCssPropertyValues();
     } else if (containerWidth >= 600) {
       this.carouselItemWidth = 90;
       this.carouselFocusedItemWidth = 120;
       this.carouselSmallItemWidth = 60;
       this.carouselItemGap = 20;
       this.calculateCarouselSizeParameters();
+      this.updateCssPropertyValues();
     }
   }
 }
