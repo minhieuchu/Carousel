@@ -101,6 +101,10 @@ class CarouselContainer extends HTMLElement {
     this.carouselFocusedItemWidth = 200;
     this.carouselSmallItemWidth = 115;
     this.carouselItemGap = 30;
+    this.carouselWidth = 850;
+    this.slideDistance = 180;
+  }
+  calculateCarouselSizeParameters() {
     this.carouselWidth =
       4 * this.carouselItemGap +
       2 * this.carouselItemWidth +
@@ -152,6 +156,10 @@ class CarouselContainer extends HTMLElement {
     setTimeout(() => {
       this.focusedItemIndexProxy.value = 3;
     }, 100);
+    window.onresize = () => {
+      this.updateCarouselSize();
+    };
+    this.updateCarouselSize();
   }
   initFocusedCarouselItem() {
     if (this.childElementCount < this.focusedItemIndexProxy.value + 2) {
@@ -196,6 +204,23 @@ class CarouselContainer extends HTMLElement {
       (this.focusedItemIndexProxy.value - 3) *
       (this.carouselItemWidth + this.carouselItemGap)
     );
+  }
+  updateCarouselSize() {
+    const containerWidth = this.parentElement.offsetWidth;
+    console.log(containerWidth);
+    if (containerWidth >= 960) {
+      this.carouselItemWidth = 150;
+      this.carouselFocusedItemWidth = 200;
+      this.carouselSmallItemWidth = 115;
+      this.carouselItemGap = 30;
+      this.calculateCarouselSizeParameters();
+    } else if (containerWidth >= 600) {
+      this.carouselItemWidth = 90;
+      this.carouselFocusedItemWidth = 120;
+      this.carouselSmallItemWidth = 60;
+      this.carouselItemGap = 20;
+      this.calculateCarouselSizeParameters();
+    }
   }
 }
 
