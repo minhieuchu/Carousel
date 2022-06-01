@@ -1,15 +1,3 @@
-const carouselItemWidth = 150;
-const carouselFocusedItemWidth = 200;
-const carouselSmallItemWidth = 115;
-const carouselItemGap = 30;
-const carouselWidth =
-  4 * carouselItemGap +
-  2 * carouselItemWidth +
-  2 * carouselSmallItemWidth +
-  carouselFocusedItemWidth;
-const slideDistance = carouselItemWidth + carouselItemGap;
-const slideTime = 100; // ms
-
 const containerStyle = `
   <style>
     #carousel-container {
@@ -23,7 +11,7 @@ const containerStyle = `
         align-items: center;
         gap: 30px;
         overflow-x: hidden;
-        width: 850px;
+        width: 100%;
         margin: 0 auto;
         padding-top: 50px;
         padding-bottom: 50px;
@@ -81,6 +69,7 @@ containerTemplate.innerHTML =
       <slot></slot>
     </div>
   </div>`;
+const slideTime = 100; // ms
 
 class CarouselContainer extends HTMLElement {
   constructor() {
@@ -107,6 +96,17 @@ class CarouselContainer extends HTMLElement {
         },
       }
     );
+
+    this.carouselItemWidth = 150;
+    this.carouselFocusedItemWidth = 200;
+    this.carouselSmallItemWidth = 115;
+    this.carouselItemGap = 30;
+    this.carouselWidth =
+      4 * this.carouselItemGap +
+      2 * this.carouselItemWidth +
+      2 * this.carouselSmallItemWidth +
+      this.carouselFocusedItemWidth;
+    this.slideDistance = this.carouselItemWidth + this.carouselItemGap;
   }
   connectedCallback() {
     this.prevButton.onclick = () => {
@@ -116,7 +116,7 @@ class CarouselContainer extends HTMLElement {
       this.prevClickTime = Date.now();
       this.isSlideRight = false;
       this.nextButton.style.display = "block";
-      this.carousel.scrollBy(-slideDistance, 0);
+      this.carousel.scrollBy(-this.slideDistance, 0);
       const timerId = setTimeout(() => {
         this.focusedItemIndexProxy.value -= 1;
         if (this.getScrollLeftValue() == 0) {
@@ -132,11 +132,11 @@ class CarouselContainer extends HTMLElement {
       this.prevClickTime = Date.now();
       this.isSlideRight = true;
       this.prevButton.style.display = "block";
-      this.carousel.scrollBy(slideDistance, 0);
+      this.carousel.scrollBy(this.slideDistance, 0);
       const timerId = setTimeout(() => {
         this.focusedItemIndexProxy.value += 1;
         if (
-          this.getScrollLeftValue() + carouselWidth >=
+          this.getScrollLeftValue() + this.carouselWidth >=
           this.carousel.scrollWidth
         ) {
           this.nextButton.style.display = "none";
@@ -194,7 +194,7 @@ class CarouselContainer extends HTMLElement {
   getScrollLeftValue() {
     return (
       (this.focusedItemIndexProxy.value - 3) *
-      (carouselItemWidth + carouselItemGap)
+      (this.carouselItemWidth + this.carouselItemGap)
     );
   }
 }
