@@ -1,3 +1,5 @@
+import store from "./store.js";
+
 const itemStyle = `
 <style>
      .carousel-item {
@@ -82,12 +84,37 @@ class CarouselItem extends HTMLElement {
     super();
     this.attachShadow({ mode: "open" });
     this.shadowRoot.appendChild(itemTemplate.content.cloneNode(true));
+    store.getInstance().registerObserver(this);
   }
   connectedCallback() {
     const frontCardContent = this.attributes.front.value;
     const backCardContent = this.attributes.back.value;
     this.shadowRoot.querySelector(".front-card").innerHTML = frontCardContent;
     this.shadowRoot.querySelector(".back-card").innerHTML = backCardContent;
+  }
+  next(storeState) {
+    const constructedStyleSheet = new CSSStyleSheet();
+    const carouselItemWidth = storeState.carouselItemWidth;
+    const carouselFocusedItemWidth = storeState.carouselFocusedItemWidth;
+    const carouselSmallItemWidth = storeState.carouselSmallItemWidth;
+    const styleSheetContent = `
+      .carousel-item {
+          width: ${carouselItemWidth}px;
+          height: ${carouselItemWidth}px;
+          min-width: ${carouselItemWidth}px;
+      }
+      .focused-item {
+        height: ${carouselFocusedItemWidth}px;
+        min-width: ${carouselFocusedItemWidth}px;
+      }
+      .small-item {
+        width: ${carouselSmallItemWidth}px;
+        height: ${carouselSmallItemWidth}px;
+        min-width: ${carouselSmallItemWidth}px;
+      }
+    `;
+    constructedStyleSheet.replaceSync(styleSheetContent);
+    this.shadowRoot.adoptedStyleSheets = [constructedStyleSheet];
   }
 }
 

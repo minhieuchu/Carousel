@@ -20,7 +20,7 @@ class ObservableStore {
 
   notifyObservers() {
     this.observers.forEach((observer) => {
-      observer.next(this.state);
+      observer.next(this._state);
     });
   }
   registerObserver(observer) {
