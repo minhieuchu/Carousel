@@ -1,3 +1,5 @@
+import store from "./store.js";
+
 const containerStyle = `
   <style>
     #carousel-container {
@@ -96,21 +98,18 @@ class CarouselContainer extends HTMLElement {
         },
       }
     );
-
-    this.carouselItemWidth = 150;
-    this.carouselFocusedItemWidth = 200;
-    this.carouselSmallItemWidth = 115;
-    this.carouselItemGap = 30;
     this.carouselWidth = 850;
     this.slideDistance = 180;
   }
   calculateCarouselSizeParameters() {
+    const globalState = store.getInstance().state;
     this.carouselWidth =
-      4 * this.carouselItemGap +
-      2 * this.carouselItemWidth +
-      2 * this.carouselSmallItemWidth +
-      this.carouselFocusedItemWidth;
-    this.slideDistance = this.carouselItemWidth + this.carouselItemGap;
+      4 * globalState.carouselItemGap +
+      2 * globalState.carouselItemWidth +
+      2 * globalState.carouselSmallItemWidth +
+      globalState.carouselFocusedItemWidth;
+    this.slideDistance =
+      globalState.carouselItemWidth + globalState.carouselItemGap;
   }
   connectedCallback() {
     this.prevButton.onclick = () => {
@@ -200,16 +199,17 @@ class CarouselContainer extends HTMLElement {
   // At the moment, there is not a standard method to determine if the scroll has finished.
   // A common workaround is to use a timer (~500ms) to wait for the completion of the scroll action.
   getScrollLeftValue() {
+    const globalState = store.getInstance().state;
     return (
       (this.focusedItemIndexProxy.value - 3) *
-      (this.carouselItemWidth + this.carouselItemGap)
+      (globalState.carouselItemWidth + globalState.carouselItemGap)
     );
   }
   updateCssPropertyValues() {
     const constructedStyleSheet = new CSSStyleSheet();
     const styleSheetContent = `
       #carousel-container { width: ${this.carouselWidth}px }
-      #carousel { gap: ${this.carouselItemGap}px }
+      #carousel { gap: ${store.getInstance().state.carouselItemGap}px }
     `;
     constructedStyleSheet.replaceSync(styleSheetContent);
     this.shadowRoot.adoptedStyleSheets = [constructedStyleSheet];
@@ -217,17 +217,23 @@ class CarouselContainer extends HTMLElement {
   updateCarouselSize() {
     const containerWidth = this.parentElement.offsetWidth;
     if (containerWidth >= 960) {
-      this.carouselItemWidth = 150;
-      this.carouselFocusedItemWidth = 200;
-      this.carouselSmallItemWidth = 115;
-      this.carouselItemGap = 30;
+      const newStoreState = {
+        carouselItemWidth: 150,
+        carouselFocusedItemWidth: 200,
+        carouselSmallItemWidth: 115,
+        carouselItemGap: 30,
+      };
+      store.getInstance().state = newStoreState;
       this.calculateCarouselSizeParameters();
       this.updateCssPropertyValues();
     } else if (containerWidth >= 600) {
-      this.carouselItemWidth = 90;
-      this.carouselFocusedItemWidth = 120;
-      this.carouselSmallItemWidth = 60;
-      this.carouselItemGap = 20;
+      const newStoreState = {
+        carouselItemWidth: 90,
+        carouselFocusedItemWidth: 120,
+        carouselSmallItemWidth: 60,
+        carouselItemGap: 20,
+      };
+      store.getInstance().state = newStoreState;
       this.calculateCarouselSizeParameters();
       this.updateCssPropertyValues();
     }

@@ -2,7 +2,7 @@ let storeInstance;
 
 class ObservableStore {
   constructor() {
-    this.state = {
+    this._state = {
       carouselItemWidth: 150,
       carouselFocusedItemWidth: 200,
       carouselSmallItemWidth: 115,
@@ -35,11 +35,11 @@ class ObservableStore {
   }
 
   set state(newState) {
-    this.state = newState;
+    this._state = newState;
     this.notifyObservers();
   }
   get state() {
-    return this.state;
+    return this._state;
   }
 }
 
