@@ -91,6 +91,7 @@ class CarouselItem extends HTMLElement {
     const backCardContent = this.attributes.back.value;
     this.shadowRoot.querySelector(".front-card").innerHTML = frontCardContent;
     this.shadowRoot.querySelector(".back-card").innerHTML = backCardContent;
+    this.next(store.getInstance().state);
   }
   next(storeState) {
     const constructedStyleSheet = new CSSStyleSheet();
