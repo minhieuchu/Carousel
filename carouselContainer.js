@@ -216,6 +216,11 @@ class CarouselContainer extends HTMLElement {
   }
   updateCarouselSize() {
     const containerWidth = this.parentElement.offsetWidth;
+    const updateStateAndCss = (newState) => {
+      store.getInstance().state = newState;
+      this.calculateCarouselSizeParameters();
+      this.updateCssPropertyValues();
+    };
     if (containerWidth >= 960) {
       const newStoreState = {
         carouselItemWidth: 150,
@@ -223,9 +228,7 @@ class CarouselContainer extends HTMLElement {
         carouselSmallItemWidth: 115,
         carouselItemGap: 30,
       };
-      store.getInstance().state = newStoreState;
-      this.calculateCarouselSizeParameters();
-      this.updateCssPropertyValues();
+      updateStateAndCss(newStoreState);
     } else if (containerWidth >= 600) {
       const newStoreState = {
         carouselItemWidth: 90,
@@ -233,9 +236,15 @@ class CarouselContainer extends HTMLElement {
         carouselSmallItemWidth: 60,
         carouselItemGap: 20,
       };
-      store.getInstance().state = newStoreState;
-      this.calculateCarouselSizeParameters();
-      this.updateCssPropertyValues();
+      updateStateAndCss(newStoreState);
+    } else {
+      const newStoreState = {
+        carouselItemWidth: 60,
+        carouselFocusedItemWidth: 90,
+        carouselSmallItemWidth: 40,
+        carouselItemGap: 15,
+      };
+      updateStateAndCss(newStoreState);
     }
   }
 }
