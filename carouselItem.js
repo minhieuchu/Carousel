@@ -3,23 +3,15 @@ import store from "./store.js";
 const itemStyle = `
 <style>
      .carousel-item {
-        width: 150px;
-        height: 150px;
-        min-width: 150px;
         perspective: 1000px;
         opacity: 0.85;
     }
 
     .focused-item {
-        height: 200px;
-        min-width: 200px;
         opacity: 1;
     }
 
     .small-item {
-        width: 115px;
-        height: 115px;
-        min-width: 115px;
         opacity: 0.6;
     }
 
@@ -69,8 +61,8 @@ itemTemplate.innerHTML =
   `
   <div class="carousel-item">
     <div class="cards-container">
-      <div class="front-card">1</div>
-      <div class="back-card">Back card</div>
+      <div class="front-card"></div>
+      <div class="back-card"></div>
     </div>
   </div>`;
 
@@ -104,6 +96,7 @@ class CarouselItem extends HTMLElement {
         min-width: ${carouselItemWidth}px;
       }
       .focused-item {
+        width: ${carouselFocusedItemWidth}px;
         height: ${carouselFocusedItemWidth}px;
         min-width: ${carouselFocusedItemWidth}px;
       }
