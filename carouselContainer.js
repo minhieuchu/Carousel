@@ -1,29 +1,17 @@
-const carouselItemWidth = 150;
-const carouselFocusedItemWidth = 200;
-const carouselSmallItemWidth = 115;
-const carouselItemGap = 30;
-const carouselWidth =
-  4 * carouselItemGap +
-  2 * carouselItemWidth +
-  2 * carouselSmallItemWidth +
-  carouselFocusedItemWidth;
-const slideDistance = carouselItemWidth + carouselItemGap;
-const slideTime = 100; // ms
+import store, { initialState, mediumState, smallState } from "./store.js";
 
 const containerStyle = `
   <style>
     #carousel-container {
         position: relative;
-        width: 850px;
         margin: 0 auto;
     }
 
     #carousel {
         display: flex;
         align-items: center;
-        gap: 30px;
         overflow-x: hidden;
-        width: 850px;
+        width: 100%;
         margin: 0 auto;
         padding-top: 50px;
         padding-bottom: 50px;
@@ -36,8 +24,6 @@ const containerStyle = `
     }
 
     .arrow {
-        width: 15px;
-        height: 15px;
         border-top: 5px solid;
         border-right: 5px solid;
         border-color: cadetblue;
@@ -60,12 +46,7 @@ const containerStyle = `
     }
 
     #prev-button {
-        left: -50px;
         display: none;
-    }
-
-    #next-button {
-        right: -50px;
     }
   </style>
 `;
@@ -81,6 +62,7 @@ containerTemplate.innerHTML =
       <slot></slot>
     </div>
   </div>`;
+const slideTime = 100; // ms
 
 class CarouselContainer extends HTMLElement {
   constructor() {
@@ -108,6 +90,16 @@ class CarouselContainer extends HTMLElement {
       }
     );
   }
+  calculateCarouselSizeParameters() {
+    const globalState = store.getInstance().state;
+    this.carouselWidth =
+      4 * globalState.carouselItemGap +
+      2 * globalState.carouselItemWidth +
+      2 * globalState.carouselSmallItemWidth +
+      globalState.carouselFocusedItemWidth;
+    this.slideDistance =
+      globalState.carouselItemWidth + globalState.carouselItemGap;
+  }
   connectedCallback() {
     this.prevButton.onclick = () => {
       if (Date.now() - this.prevClickTime < 200) {
@@ -116,7 +108,7 @@ class CarouselContainer extends HTMLElement {
       this.prevClickTime = Date.now();
       this.isSlideRight = false;
       this.nextButton.style.display = "block";
-      this.carousel.scrollBy(-slideDistance, 0);
+      this.carousel.scrollBy(-this.slideDistance, 0);
       const timerId = setTimeout(() => {
         this.focusedItemIndexProxy.value -= 1;
         if (this.getScrollLeftValue() == 0) {
@@ -132,11 +124,11 @@ class CarouselContainer extends HTMLElement {
       this.prevClickTime = Date.now();
       this.isSlideRight = true;
       this.prevButton.style.display = "block";
-      this.carousel.scrollBy(slideDistance, 0);
+      this.carousel.scrollBy(this.slideDistance, 0);
       const timerId = setTimeout(() => {
         this.focusedItemIndexProxy.value += 1;
         if (
-          this.getScrollLeftValue() + carouselWidth >=
+          this.getScrollLeftValue() + this.carouselWidth >=
           this.carousel.scrollWidth
         ) {
           this.nextButton.style.display = "none";
@@ -152,6 +144,10 @@ class CarouselContainer extends HTMLElement {
     setTimeout(() => {
       this.focusedItemIndexProxy.value = 3;
     }, 100);
+    window.onresize = () => {
+      this.updateCarouselSize();
+    };
+    this.updateCarouselSize();
   }
   initFocusedCarouselItem() {
     if (this.childElementCount < this.focusedItemIndexProxy.value + 2) {
@@ -192,10 +188,51 @@ class CarouselContainer extends HTMLElement {
   // At the moment, there is not a standard method to determine if the scroll has finished.
   // A common workaround is to use a timer (~500ms) to wait for the completion of the scroll action.
   getScrollLeftValue() {
+    const globalState = store.getInstance().state;
     return (
       (this.focusedItemIndexProxy.value - 3) *
-      (carouselItemWidth + carouselItemGap)
+      (globalState.carouselItemWidth + globalState.carouselItemGap)
     );
+  }
+  updateCssPropertyValues() {
+    const constructedStyleSheet = new CSSStyleSheet();
+    const globalState = store.getInstance().state;
+    const styleSheetContent = `
+      #carousel-container { width: ${this.carouselWidth}px }
+      #carousel { gap: ${globalState.carouselItemGap}px }
+      .arrow {
+        width: ${globalState.slideButtonSize}px;
+        height: ${globalState.slideButtonSize}px;
+      }
+      #prev-button {
+        left: ${globalState.slideButtonDistance}px;
+      }
+      #next-button {
+        right: ${globalState.slideButtonDistance}px;
+      }
+    `;
+    constructedStyleSheet.replaceSync(styleSheetContent);
+    this.shadowRoot.adoptedStyleSheets = [constructedStyleSheet];
+  }
+  scrollAfterResize() {
+    const scrollDistance = this.getScrollLeftValue() - this.carousel.scrollLeft;
+    this.carousel.scrollBy(scrollDistance, 0);
+  }
+  updateCarouselSize() {
+    const containerWidth = this.parentElement.offsetWidth;
+    const updateStateAndCss = (newState) => {
+      store.getInstance().state = newState;
+      this.calculateCarouselSizeParameters();
+      this.updateCssPropertyValues();
+      this.scrollAfterResize();
+    };
+    if (containerWidth >= 960) {
+      updateStateAndCss(initialState);
+    } else if (containerWidth >= 600) {
+      updateStateAndCss(mediumState);
+    } else {
+      updateStateAndCss(smallState);
+    }
   }
 }
 
