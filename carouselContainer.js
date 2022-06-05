@@ -214,12 +214,17 @@ class CarouselContainer extends HTMLElement {
     constructedStyleSheet.replaceSync(styleSheetContent);
     this.shadowRoot.adoptedStyleSheets = [constructedStyleSheet];
   }
+  scrollAfterResize() {
+    const scrollDistance = this.getScrollLeftValue() - this.carousel.scrollLeft;
+    this.carousel.scrollBy(scrollDistance, 0);
+  }
   updateCarouselSize() {
     const containerWidth = this.parentElement.offsetWidth;
     const updateStateAndCss = (newState) => {
       store.getInstance().state = newState;
       this.calculateCarouselSizeParameters();
       this.updateCssPropertyValues();
+      this.scrollAfterResize();
     };
     if (containerWidth >= 960) {
       updateStateAndCss(initialState);
