@@ -207,9 +207,20 @@ class CarouselContainer extends HTMLElement {
   }
   updateCssPropertyValues() {
     const constructedStyleSheet = new CSSStyleSheet();
+    const globalState = store.getInstance().state;
     const styleSheetContent = `
       #carousel-container { width: ${this.carouselWidth}px }
-      #carousel { gap: ${store.getInstance().state.carouselItemGap}px }
+      #carousel { gap: ${globalState.carouselItemGap}px }
+      .arrow {
+        width: ${globalState.slideButtonSize}px;
+        height: ${globalState.slideButtonSize}px;
+      }
+      #prev-button {
+        left: ${globalState.slideButtonDistance}px;
+      }
+      #next-button {
+        right: ${globalState.slideButtonDistance}px;
+      }
     `;
     constructedStyleSheet.replaceSync(styleSheetContent);
     this.shadowRoot.adoptedStyleSheets = [constructedStyleSheet];
@@ -230,6 +241,8 @@ class CarouselContainer extends HTMLElement {
         carouselItemFontSize: 24,
         carouselFocusedItemFontSize: 26,
         carouselSmallItemFontSize: 18,
+        slideButtonSize: 15,
+        slideButtonDistance: -50,
       };
       updateStateAndCss(newStoreState);
     } else if (containerWidth >= 600) {
@@ -241,6 +254,8 @@ class CarouselContainer extends HTMLElement {
         carouselItemFontSize: 16,
         carouselFocusedItemFontSize: 20,
         carouselSmallItemFontSize: 13,
+        slideButtonSize: 15,
+        slideButtonDistance: -50,
       };
       updateStateAndCss(newStoreState);
     } else {
@@ -251,7 +266,9 @@ class CarouselContainer extends HTMLElement {
         carouselItemGap: 15,
         carouselItemFontSize: 12,
         carouselFocusedItemFontSize: 15,
-        carouselSmallItemFontSize: 19,
+        carouselSmallItemFontSize: 9,
+        slideButtonSize: 12,
+        slideButtonDistance: -40,
       };
       updateStateAndCss(newStoreState);
     }

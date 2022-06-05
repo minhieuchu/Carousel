@@ -10,6 +10,8 @@ class ObservableStore {
       carouselItemFontSize: 24,
       carouselFocusedItemFontSize: 26,
       carouselSmallItemFontSize: 18,
+      slideButtonSize: 15,
+      slideButtonDistance: 50,
     };
     this.observers = [];
   }
