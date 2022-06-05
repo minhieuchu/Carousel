@@ -227,6 +227,9 @@ class CarouselContainer extends HTMLElement {
         carouselFocusedItemWidth: 200,
         carouselSmallItemWidth: 115,
         carouselItemGap: 30,
+        carouselItemFontSize: 24,
+        carouselFocusedItemFontSize: 26,
+        carouselSmallItemFontSize: 18,
       };
       updateStateAndCss(newStoreState);
     } else if (containerWidth >= 600) {
@@ -235,6 +238,9 @@ class CarouselContainer extends HTMLElement {
         carouselFocusedItemWidth: 120,
         carouselSmallItemWidth: 60,
         carouselItemGap: 20,
+        carouselItemFontSize: 16,
+        carouselFocusedItemFontSize: 20,
+        carouselSmallItemFontSize: 13,
       };
       updateStateAndCss(newStoreState);
     } else {
@@ -243,6 +249,9 @@ class CarouselContainer extends HTMLElement {
         carouselFocusedItemWidth: 90,
         carouselSmallItemWidth: 40,
         carouselItemGap: 15,
+        carouselItemFontSize: 12,
+        carouselFocusedItemFontSize: 15,
+        carouselSmallItemFontSize: 19,
       };
       updateStateAndCss(newStoreState);
     }

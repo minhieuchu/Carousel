@@ -7,6 +7,9 @@ class ObservableStore {
       carouselFocusedItemWidth: 200,
       carouselSmallItemWidth: 115,
       carouselItemGap: 30,
+      carouselItemFontSize: 24,
+      carouselFocusedItemFontSize: 26,
+      carouselSmallItemFontSize: 18,
     };
     this.observers = [];
   }

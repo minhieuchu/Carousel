@@ -44,7 +44,6 @@ const itemStyle = `
         align-items: center;
         justify-content: center;
         border-radius: 5px;
-        font-size: 32px;
         backface-visibility: hidden;
     }
 
@@ -57,10 +56,6 @@ const itemStyle = `
         transform: rotateY(180deg);
         background-color: #ffc107;
         color: whitesmoke;
-    }
-
-    .small-item>.cards-container>div.back-card {
-        font-size: 24px;
     }
 
     .hide {
@@ -98,11 +93,15 @@ class CarouselItem extends HTMLElement {
     const carouselItemWidth = storeState.carouselItemWidth;
     const carouselFocusedItemWidth = storeState.carouselFocusedItemWidth;
     const carouselSmallItemWidth = storeState.carouselSmallItemWidth;
+    const carouselItemFontSize = storeState.carouselItemFontSize;
+    const carouselSmallItemFontSize = storeState.carouselSmallItemFontSize;
+    const carouselFocusedItemFontSize = storeState.carouselFocusedItemFontSize;
+
     const styleSheetContent = `
       .carousel-item {
-          width: ${carouselItemWidth}px;
-          height: ${carouselItemWidth}px;
-          min-width: ${carouselItemWidth}px;
+        width: ${carouselItemWidth}px;
+        height: ${carouselItemWidth}px;
+        min-width: ${carouselItemWidth}px;
       }
       .focused-item {
         height: ${carouselFocusedItemWidth}px;
@@ -112,6 +111,18 @@ class CarouselItem extends HTMLElement {
         width: ${carouselSmallItemWidth}px;
         height: ${carouselSmallItemWidth}px;
         min-width: ${carouselSmallItemWidth}px;
+      }
+      .carousel-item>.cards-container>.front-card,
+      .carousel-item>.cards-container>.back-card {
+        font-size: ${carouselItemFontSize}px;
+      }
+      .focused-item>.cards-container>div.front-card,
+      .focused-item>.cards-container>div.back-card {
+        font-size: ${carouselFocusedItemFontSize}px;
+      }
+      .small-item>.cards-container>div.front-card,
+      .small-item>.cards-container>div.back-card {
+        font-size: ${carouselSmallItemFontSize}px;
       }
     `;
     constructedStyleSheet.replaceSync(styleSheetContent);
