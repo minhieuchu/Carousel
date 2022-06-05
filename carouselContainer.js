@@ -4,14 +4,12 @@ const containerStyle = `
   <style>
     #carousel-container {
         position: relative;
-        width: 850px;
         margin: 0 auto;
     }
 
     #carousel {
         display: flex;
         align-items: center;
-        gap: 30px;
         overflow-x: hidden;
         width: 100%;
         margin: 0 auto;
@@ -26,8 +24,6 @@ const containerStyle = `
     }
 
     .arrow {
-        width: 15px;
-        height: 15px;
         border-top: 5px solid;
         border-right: 5px solid;
         border-color: cadetblue;
@@ -50,12 +46,7 @@ const containerStyle = `
     }
 
     #prev-button {
-        left: -50px;
         display: none;
-    }
-
-    #next-button {
-        right: -50px;
     }
   </style>
 `;
@@ -98,8 +89,6 @@ class CarouselContainer extends HTMLElement {
         },
       }
     );
-    this.carouselWidth = 850;
-    this.slideDistance = 180;
   }
   calculateCarouselSizeParameters() {
     const globalState = store.getInstance().state;
