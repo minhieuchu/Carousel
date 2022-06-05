@@ -1,4 +1,4 @@
-import store, { initialState } from "./store.js";
+import store, { initialState, mediumState, smallState } from "./store.js";
 
 const containerStyle = `
   <style>
@@ -235,31 +235,9 @@ class CarouselContainer extends HTMLElement {
     if (containerWidth >= 960) {
       updateStateAndCss(initialState);
     } else if (containerWidth >= 600) {
-      const newStoreState = {
-        carouselItemWidth: 90,
-        carouselFocusedItemWidth: 120,
-        carouselSmallItemWidth: 60,
-        carouselItemGap: 20,
-        carouselItemFontSize: 16,
-        carouselFocusedItemFontSize: 20,
-        carouselSmallItemFontSize: 13,
-        slideButtonSize: 15,
-        slideButtonDistance: -50,
-      };
-      updateStateAndCss(newStoreState);
+      updateStateAndCss(mediumState);
     } else {
-      const newStoreState = {
-        carouselItemWidth: 60,
-        carouselFocusedItemWidth: 90,
-        carouselSmallItemWidth: 40,
-        carouselItemGap: 15,
-        carouselItemFontSize: 12,
-        carouselFocusedItemFontSize: 15,
-        carouselSmallItemFontSize: 9,
-        slideButtonSize: 12,
-        slideButtonDistance: -40,
-      };
-      updateStateAndCss(newStoreState);
+      updateStateAndCss(smallState);
     }
   }
 }
