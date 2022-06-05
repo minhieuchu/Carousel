@@ -1,18 +1,20 @@
 let storeInstance;
 
+export const initialState = {
+  carouselItemWidth: 150,
+  carouselFocusedItemWidth: 200,
+  carouselSmallItemWidth: 115,
+  carouselItemGap: 30,
+  carouselItemFontSize: 24,
+  carouselFocusedItemFontSize: 26,
+  carouselSmallItemFontSize: 18,
+  slideButtonSize: 15,
+  slideButtonDistance: -50,
+};
+
 class ObservableStore {
   constructor() {
-    this._state = {
-      carouselItemWidth: 150,
-      carouselFocusedItemWidth: 200,
-      carouselSmallItemWidth: 115,
-      carouselItemGap: 30,
-      carouselItemFontSize: 24,
-      carouselFocusedItemFontSize: 26,
-      carouselSmallItemFontSize: 18,
-      slideButtonSize: 15,
-      slideButtonDistance: 50,
-    };
+    this._state = initialState;
     this.observers = [];
   }
 
