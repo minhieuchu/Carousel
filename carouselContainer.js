@@ -17,6 +17,7 @@ const containerStyle = `
         padding-bottom: 50px;
         scroll-behavior: smooth;
         scrollbar-width: none;
+        cursor: pointer;
     }
 
     #carousel::-webkit-scrollbar {
@@ -89,6 +90,7 @@ class CarouselContainer extends HTMLElement {
         },
       }
     );
+    this.isDragging = false;
   }
   calculateCarouselSizeParameters() {
     const globalState = store.getInstance().state;
@@ -148,6 +150,43 @@ class CarouselContainer extends HTMLElement {
       this.updateCarouselSize();
     };
     this.updateCarouselSize();
+
+    // Scroll carousel by dragging
+    this.carousel.onmousedown = (event) => {
+      this.isDragging = true;
+      this.cursorStartPositionX = event.clientX;
+      this.carousel.style.scrollBehavior = "auto";
+    };
+    this.carousel.onmousemove = (event) => {
+      if (!this.isDragging) {
+        return;
+      }
+      const draggedDistance = -(event.clientX - this.cursorStartPositionX);
+      this.carousel.scrollLeft += draggedDistance;
+      this.cursorStartPositionX = event.clientX;
+    };
+    this.carousel.onmouseup = (event) => {
+      this.isDragging = false;
+      const draggedDistance = -(event.clientX - this.cursorStartPositionX);
+      let numScrollableCarouselItemsLeft = Math.round(
+        (this.carousel.scrollLeft + draggedDistance) / this.slideDistance
+      );
+      if (numScrollableCarouselItemsLeft > this.childElementCount - 5) {
+        numScrollableCarouselItemsLeft = this.childElementCount - 5;
+      }
+      if (numScrollableCarouselItemsLeft < 0) {
+        numScrollableCarouselItemsLeft = 0;
+      }
+
+      const scrollableLeftDistance =
+        numScrollableCarouselItemsLeft * this.slideDistance -
+        this.carousel.scrollLeft;
+      this.carousel.style.scrollBehavior = "smooth";
+      this.carousel.scrollBy(scrollableLeftDistance, 0);
+      setTimeout(() => {
+        this.focusedItemIndexProxy.value = numScrollableCarouselItemsLeft + 3;
+      }, slideTime);
+    };
   }
   initFocusedCarouselItem() {
     if (this.childElementCount < this.focusedItemIndexProxy.value + 2) {
