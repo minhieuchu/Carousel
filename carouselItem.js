@@ -117,7 +117,31 @@ class CarouselItem extends HTMLElement {
     constructedStyleSheet.replaceSync(styleSheetContent);
     this.shadowRoot.adoptedStyleSheets = [constructedStyleSheet];
   }
-  nextEventState(eventState) {}
+  nextEventState(eventState) {
+    const constructedStyleSheet = new CSSStyleSheet();
+    let styleSheetContent;
+    if (eventState.onMouseDown) {
+      styleSheetContent = `
+        .carousel-item>.cards-container:hover {
+            transform: none;
+        }
+      `;
+    } else {
+      styleSheetContent = `
+        .carousel-item>.cards-container:hover {
+            transform: translateY(-20px) rotateY(180deg);
+        }
+      `;
+    }
+
+    constructedStyleSheet.replaceSync(styleSheetContent);
+    if (this.shadowRoot.adoptedStyleSheets.length < 2) {
+      this.shadowRoot.adoptedStyleSheets.push(constructedStyleSheet);
+    } else {
+      // At the moment, there are at most 2 constructed stylesheets for each carousel item.
+      this.shadowRoot.adoptedStyleSheets[1] = constructedStyleSheet;
+    }
+  }
 }
 
 export default CarouselItem;
