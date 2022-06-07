@@ -182,6 +182,18 @@ class CarouselContainer extends HTMLElement {
       this.carousel.scrollBy(scrollableLeftDistance, 0);
       setTimeout(() => {
         this.focusedItemIndexProxy.value = numScrollableCarouselItemsLeft + 3;
+        // Show / Hide slide buttons
+        if (this.focusedItemIndexProxy.value <= 3) {
+          this.prevButton.style.display = "none";
+        } else {
+          this.prevButton.style.display = "block";
+        }
+
+        if (this.focusedItemIndexProxy.value + 2 >= this.childElementCount) {
+          this.nextButton.style.display = "none";
+        } else {
+          this.nextButton.style.display = "block";
+        }
       }, slideTime);
     };
   }
