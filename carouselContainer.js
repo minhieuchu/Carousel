@@ -96,7 +96,7 @@ class CarouselContainer extends HTMLElement {
     this.isDragging = false;
   }
   calculateCarouselSizeParameters() {
-    const globalState = store.getInstance().state;
+    const globalState = store.getInstance().sizeState;
     this.carouselWidth =
       4 * globalState.carouselItemGap +
       2 * globalState.carouselItemWidth +
@@ -157,6 +157,9 @@ class CarouselContainer extends HTMLElement {
       this.isDragging = true;
       this.cursorStartPositionX = event.clientX;
       this.carousel.style.scrollBehavior = "auto";
+      store.getInstance().eventState = {
+        onMouseDown: true,
+      };
     };
     this.carousel.onmousemove = (event) => {
       if (!this.isDragging) {
@@ -168,6 +171,9 @@ class CarouselContainer extends HTMLElement {
     };
     this.carousel.onmouseup = (event) => {
       this.isDragging = false;
+      store.getInstance().eventState = {
+        onMouseDown: false,
+      };
       const draggedDistance = -(event.clientX - this.cursorStartPositionX);
       let numScrollableCarouselItemsLeft = Math.round(
         (this.carousel.scrollLeft + draggedDistance) / this.slideDistance
@@ -233,7 +239,7 @@ class CarouselContainer extends HTMLElement {
   // At the moment, there is not a standard method to determine if the scroll has finished.
   // A common workaround is to use a timer (~500ms) to wait for the completion of the scroll action.
   getScrollLeftValue() {
-    const globalState = store.getInstance().state;
+    const globalState = store.getInstance().sizeState;
     return (
       (this.focusedItemIndexProxy.value - 3) *
       (globalState.carouselItemWidth + globalState.carouselItemGap)
@@ -241,7 +247,7 @@ class CarouselContainer extends HTMLElement {
   }
   updateCssPropertyValues() {
     const constructedStyleSheet = new CSSStyleSheet();
-    const globalState = store.getInstance().state;
+    const globalState = store.getInstance().sizeState;
     const styleSheetContent = `
       #carousel-container { width: ${this.carouselWidth}px }
       #carousel { gap: ${globalState.carouselItemGap}px }
@@ -266,7 +272,7 @@ class CarouselContainer extends HTMLElement {
   updateCarouselSize() {
     const containerWidth = this.parentElement.offsetWidth;
     const updateStateAndCss = (newState) => {
-      store.getInstance().state = newState;
+      store.getInstance().sizeState = newState;
       this.calculateCarouselSizeParameters();
       this.updateCssPropertyValues();
       this.scrollAfterResize();

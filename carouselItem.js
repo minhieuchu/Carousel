@@ -74,7 +74,7 @@ class CarouselItem extends HTMLElement {
     const backCardContent = this.attributes.back.value;
     this.shadowRoot.querySelector(".front-card").innerHTML = frontCardContent;
     this.shadowRoot.querySelector(".back-card").innerHTML = backCardContent;
-    this.nextSizeState(store.getInstance().state);
+    this.nextSizeState(store.getInstance().sizeState);
   }
   nextSizeState(storeState) {
     const constructedStyleSheet = new CSSStyleSheet();
@@ -117,6 +117,7 @@ class CarouselItem extends HTMLElement {
     constructedStyleSheet.replaceSync(styleSheetContent);
     this.shadowRoot.adoptedStyleSheets = [constructedStyleSheet];
   }
+  nextEventState(eventState) {}
 }
 
 export default CarouselItem;
