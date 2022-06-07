@@ -1,4 +1,8 @@
-import store, { initialState, mediumState, smallState } from "./store.js";
+import store, {
+  initialSizeState,
+  mediumSizeState,
+  smallSizeState,
+} from "./store.js";
 
 const containerStyle = `
   <style>
@@ -268,11 +272,11 @@ class CarouselContainer extends HTMLElement {
       this.scrollAfterResize();
     };
     if (containerWidth >= 960) {
-      updateStateAndCss(initialState);
+      updateStateAndCss(initialSizeState);
     } else if (containerWidth >= 600) {
-      updateStateAndCss(mediumState);
+      updateStateAndCss(mediumSizeState);
     } else {
-      updateStateAndCss(smallState);
+      updateStateAndCss(smallSizeState);
     }
   }
 }

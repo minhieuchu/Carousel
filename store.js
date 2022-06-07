@@ -1,6 +1,6 @@
 let storeInstance;
 
-export const initialState = {
+export const initialSizeState = {
   carouselItemWidth: 115,
   carouselMediumItemWidth: 150,
   carouselFocusedItemWidth: 200,
@@ -12,7 +12,7 @@ export const initialState = {
   slideButtonDistance: -50,
 };
 
-export const mediumState = {
+export const mediumSizeState = {
   carouselMediumItemWidth: 90,
   carouselFocusedItemWidth: 120,
   carouselItemWidth: 60,
@@ -24,7 +24,7 @@ export const mediumState = {
   slideButtonDistance: -50,
 };
 
-export const smallState = {
+export const smallSizeState = {
   carouselMediumItemWidth: 60,
   carouselFocusedItemWidth: 90,
   carouselItemWidth: 40,
@@ -38,7 +38,7 @@ export const smallState = {
 
 class ObservableStore {
   constructor() {
-    this._state = initialState;
+    this._sizeState = initialSizeState;
     this.observers = [];
   }
 
@@ -49,9 +49,9 @@ class ObservableStore {
     return storeInstance;
   }
 
-  notifyObservers() {
+  notifyObserversOnSizeChange() {
     this.observers.forEach((observer) => {
-      observer.next(this._state);
+      observer.nextSizeState(this._sizeState);
     });
   }
   registerObserver(observer) {
@@ -65,12 +65,12 @@ class ObservableStore {
     this.observers.splice(unregisteredObserverIndex, 1);
   }
 
-  set state(newState) {
-    this._state = newState;
-    this.notifyObservers();
+  set sizeState(newState) {
+    this._sizeState = newState;
+    this.notifyObserversOnSizeChange();
   }
-  get state() {
-    return this._state;
+  get sizeState() {
+    return this._sizeState;
   }
 }
 
