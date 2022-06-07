@@ -74,7 +74,6 @@ class CarouselContainer extends HTMLElement {
     this.prevClickTime = Date.now();
     this.prevButton = this.shadowRoot.getElementById("prev-button");
     this.nextButton = this.shadowRoot.getElementById("next-button");
-    this.isSlideRight = true;
     this.carousel = this.shadowRoot.getElementById("carousel");
     this.focusedItemIndexProxy = new Proxy(
       { value: 3 },
@@ -97,7 +96,7 @@ class CarouselContainer extends HTMLElement {
     this.carouselWidth =
       4 * globalState.carouselItemGap +
       2 * globalState.carouselItemWidth +
-      2 * globalState.carouselSmallItemWidth +
+      2 * globalState.carouselMediumItemWidth +
       globalState.carouselFocusedItemWidth;
     this.slideDistance =
       globalState.carouselItemWidth + globalState.carouselItemGap;
@@ -108,7 +107,6 @@ class CarouselContainer extends HTMLElement {
         return;
       }
       this.prevClickTime = Date.now();
-      this.isSlideRight = false;
       this.nextButton.style.display = "block";
       this.carousel.scrollBy(-this.slideDistance, 0);
       const timerId = setTimeout(() => {
@@ -124,7 +122,6 @@ class CarouselContainer extends HTMLElement {
         return;
       }
       this.prevClickTime = Date.now();
-      this.isSlideRight = true;
       this.prevButton.style.display = "block";
       this.carousel.scrollBy(this.slideDistance, 0);
       const timerId = setTimeout(() => {
@@ -198,28 +195,21 @@ class CarouselContainer extends HTMLElement {
     const focusedCarouselItemHtml = this.children
       .item(itemIndex - 1)
       .shadowRoot.querySelector(".carousel-item");
-    const smallCarouselItemLeftHtml = this.children
-      .item(itemIndex - 3)
+    const mediumCarouselItemLeftHtml = this.children
+      .item(itemIndex - 2)
       .shadowRoot.querySelector(".carousel-item");
-    const smallCarouselItemRightHtml = this.children
-      .item(itemIndex + 1)
+    const mediumCarouselItemRightHtml = this.children
+      .item(itemIndex)
       .shadowRoot.querySelector(".carousel-item");
 
     if (makeFocused) {
       focusedCarouselItemHtml.classList.add("focused-item");
-      smallCarouselItemRightHtml.classList.remove("hide");
-      smallCarouselItemLeftHtml.classList.remove("hide");
-      smallCarouselItemLeftHtml.classList.add("small-item");
-      smallCarouselItemRightHtml.classList.add("small-item");
+      mediumCarouselItemLeftHtml.classList.add("medium-item");
+      mediumCarouselItemRightHtml.classList.add("medium-item");
     } else {
       focusedCarouselItemHtml.classList.remove("focused-item");
-      if (this.isSlideRight) {
-        smallCarouselItemLeftHtml.classList.add("hide");
-      } else {
-        smallCarouselItemRightHtml.classList.add("hide");
-      }
-      smallCarouselItemLeftHtml.classList.remove("small-item");
-      smallCarouselItemRightHtml.classList.remove("small-item");
+      mediumCarouselItemLeftHtml.classList.remove("medium-item");
+      mediumCarouselItemRightHtml.classList.remove("medium-item");
     }
   }
   // Use this function instead of carousel.scrollLeft

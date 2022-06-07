@@ -2,17 +2,17 @@ import store from "./store.js";
 
 const itemStyle = `
 <style>
-     .carousel-item {
+    .carousel-item {
         perspective: 1000px;
-        opacity: 0.85;
+        opacity: 0.6;
     }
 
     .focused-item {
         opacity: 1;
     }
 
-    .small-item {
-        opacity: 0.6;
+    .medium-item {
+        opacity: 0.85;
     }
 
     .carousel-item>.cards-container {
@@ -49,10 +49,6 @@ const itemStyle = `
         background-color: #ffc107;
         color: whitesmoke;
     }
-
-    .hide {
-        visibility: hidden;
-    }
 </style>
 `;
 const itemTemplate = document.createElement("template");
@@ -84,9 +80,9 @@ class CarouselItem extends HTMLElement {
     const constructedStyleSheet = new CSSStyleSheet();
     const carouselItemWidth = storeState.carouselItemWidth;
     const carouselFocusedItemWidth = storeState.carouselFocusedItemWidth;
-    const carouselSmallItemWidth = storeState.carouselSmallItemWidth;
+    const carouselMediumItemWidth = storeState.carouselMediumItemWidth;
     const carouselItemFontSize = storeState.carouselItemFontSize;
-    const carouselSmallItemFontSize = storeState.carouselSmallItemFontSize;
+    const carouselMediumItemFontSize = storeState.carouselMediumItemFontSize;
     const carouselFocusedItemFontSize = storeState.carouselFocusedItemFontSize;
 
     const styleSheetContent = `
@@ -100,10 +96,10 @@ class CarouselItem extends HTMLElement {
         height: ${carouselFocusedItemWidth}px;
         min-width: ${carouselFocusedItemWidth}px;
       }
-      .small-item {
-        width: ${carouselSmallItemWidth}px;
-        height: ${carouselSmallItemWidth}px;
-        min-width: ${carouselSmallItemWidth}px;
+      .medium-item {
+        width: ${carouselMediumItemWidth}px;
+        height: ${carouselMediumItemWidth}px;
+        min-width: ${carouselMediumItemWidth}px;
       }
       .carousel-item>.cards-container>.front-card,
       .carousel-item>.cards-container>.back-card {
@@ -113,9 +109,9 @@ class CarouselItem extends HTMLElement {
       .focused-item>.cards-container>div.back-card {
         font-size: ${carouselFocusedItemFontSize}px;
       }
-      .small-item>.cards-container>div.front-card,
-      .small-item>.cards-container>div.back-card {
-        font-size: ${carouselSmallItemFontSize}px;
+      .medium-item>.cards-container>div.front-card,
+      .medium-item>.cards-container>div.back-card {
+        font-size: ${carouselMediumItemFontSize}px;
       }
     `;
     constructedStyleSheet.replaceSync(styleSheetContent);
