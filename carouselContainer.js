@@ -86,9 +86,23 @@ class CarouselContainer extends HTMLElement {
           if (prop != "value") {
             return false;
           }
-          _self.updateFocusedItem(target.value, false);
+          let transitionStep = 0;
+          if (target.value < newValue) {
+            transitionStep = 1;
+          } else if (target.value > newValue) {
+            transitionStep = -1;
+          }
+          let currentItemIdex = target.value;
+          const transitionIntervalId = setInterval(() => {
+            _self.updateFocusedItem(currentItemIdex, false);
+            currentItemIdex += transitionStep;
+            _self.updateFocusedItem(currentItemIdex);
+            if (currentItemIdex == newValue) {
+              clearInterval(transitionIntervalId);
+            }
+          }, slideTime);
           target.value = newValue;
-          _self.updateFocusedItem(newValue);
+
           return true;
         },
       }
