@@ -1,44 +1,47 @@
 let storeInstance;
 
-export const initialState = {
-  carouselItemWidth: 150,
+export const initialSizeState = {
+  carouselItemWidth: 115,
+  carouselMediumItemWidth: 150,
   carouselFocusedItemWidth: 200,
-  carouselSmallItemWidth: 115,
   carouselItemGap: 30,
-  carouselItemFontSize: 24,
+  carouselItemFontSize: 18,
+  carouselMediumItemFontSize: 24,
   carouselFocusedItemFontSize: 26,
-  carouselSmallItemFontSize: 18,
   slideButtonSize: 15,
   slideButtonDistance: -50,
 };
 
-export const mediumState = {
-  carouselItemWidth: 90,
+export const mediumSizeState = {
+  carouselMediumItemWidth: 90,
   carouselFocusedItemWidth: 120,
-  carouselSmallItemWidth: 60,
+  carouselItemWidth: 60,
   carouselItemGap: 20,
-  carouselItemFontSize: 16,
+  carouselItemFontSize: 13,
+  carouselMediumItemFontSize: 16,
   carouselFocusedItemFontSize: 20,
-  carouselSmallItemFontSize: 13,
   slideButtonSize: 15,
   slideButtonDistance: -50,
 };
 
-export const smallState = {
-  carouselItemWidth: 60,
+export const smallSizeState = {
+  carouselMediumItemWidth: 60,
   carouselFocusedItemWidth: 90,
-  carouselSmallItemWidth: 40,
+  carouselItemWidth: 40,
   carouselItemGap: 15,
-  carouselItemFontSize: 12,
+  carouselItemFontSize: 9,
+  carouselMediumItemFontSize: 12,
   carouselFocusedItemFontSize: 15,
-  carouselSmallItemFontSize: 9,
   slideButtonSize: 12,
   slideButtonDistance: -40,
 };
 
 class ObservableStore {
   constructor() {
-    this._state = initialState;
+    this._eventState = {
+      onMouseDown: false,
+    };
+    this._sizeState = initialSizeState;
     this.observers = [];
   }
 
@@ -49,9 +52,14 @@ class ObservableStore {
     return storeInstance;
   }
 
-  notifyObservers() {
+  notifyObserversOnSizeChange() {
     this.observers.forEach((observer) => {
-      observer.next(this._state);
+      observer.nextSizeState(this._sizeState);
+    });
+  }
+  notifyObserversOnEventChange() {
+    this.observers.forEach((observer) => {
+      observer.nextEventState(this._eventState);
     });
   }
   registerObserver(observer) {
@@ -65,12 +73,19 @@ class ObservableStore {
     this.observers.splice(unregisteredObserverIndex, 1);
   }
 
-  set state(newState) {
-    this._state = newState;
-    this.notifyObservers();
+  set sizeState(newState) {
+    this._sizeState = newState;
+    this.notifyObserversOnSizeChange();
   }
-  get state() {
-    return this._state;
+  set eventState(newState) {
+    this._eventState = newState;
+    this.notifyObserversOnEventChange();
+  }
+  get sizeState() {
+    return this._sizeState;
+  }
+  get eventState() {
+    return this._eventState;
   }
 }
 
