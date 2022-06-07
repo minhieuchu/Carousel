@@ -38,6 +38,9 @@ export const smallSizeState = {
 
 class ObservableStore {
   constructor() {
+    this._eventState = {
+      onMouseDown: false,
+    };
     this._sizeState = initialSizeState;
     this.observers = [];
   }
@@ -52,6 +55,11 @@ class ObservableStore {
   notifyObserversOnSizeChange() {
     this.observers.forEach((observer) => {
       observer.nextSizeState(this._sizeState);
+    });
+  }
+  notifyObserversOnEventChange() {
+    this.observers.forEach((observer) => {
+      observer.nextEventState(this._eventState);
     });
   }
   registerObserver(observer) {
@@ -69,8 +77,15 @@ class ObservableStore {
     this._sizeState = newState;
     this.notifyObserversOnSizeChange();
   }
+  set eventState(newState) {
+    this._eventState = newState;
+    this.notifyObserversOnEventChange();
+  }
   get sizeState() {
     return this._sizeState;
+  }
+  get eventState() {
+    return this._eventState;
   }
 }
 
