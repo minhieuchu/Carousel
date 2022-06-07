@@ -100,7 +100,7 @@ class CarouselContainer extends HTMLElement {
             if (currentItemIdex == newValue) {
               clearInterval(transitionIntervalId);
             }
-          }, slideTime);
+          }, 80);
           target.value = newValue;
 
           return true;
