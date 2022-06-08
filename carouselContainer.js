@@ -79,8 +79,8 @@ class CarouselContainer extends HTMLElement {
     this.prevButton = this.shadowRoot.getElementById("prev-button");
     this.nextButton = this.shadowRoot.getElementById("next-button");
     this.carousel = this.shadowRoot.getElementById("carousel");
-    this.initialFocusedItemIndex = 3;
-    this.numDisplayCarouselItems = 5;
+    this.initialFocusedItemIndex = 2;
+    this.numDisplayCarouselItems = 3;
     this.focusedItemIndexProxy = new Proxy(
       { value: this.initialFocusedItemIndex },
       {
@@ -201,7 +201,7 @@ class CarouselContainer extends HTMLElement {
 
     setTimeout(() => {
       this.focusedItemIndexProxy.value = this.initialFocusedItemIndex;
-    }, 100);
+    }, 0);
 
     // Scroll carousel by dragging
     this.carousel.onmousedown = (event) => {
