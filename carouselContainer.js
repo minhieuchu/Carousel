@@ -186,12 +186,11 @@ class CarouselContainer extends HTMLElement {
       }, slideTime);
     };
 
-    if (this.childElementCount <= 5) {
-      this.initialFocusedItemIndex = 2;
-      this.numDisplayCarouselItems = 3;
-      if (this.childElementCount == 3) {
-        this.nextButton.style.display = "none";
-      }
+    if (this.childElementCount > 5) {
+      this.initialFocusedItemIndex = 3;
+      this.numDisplayCarouselItems = 5;
+    } else if (this.childElementCount == 3) {
+      this.nextButton.style.display = "none";
     }
 
     this.childListObserver = new MutationObserver(
