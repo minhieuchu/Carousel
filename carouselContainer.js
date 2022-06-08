@@ -140,6 +140,16 @@ class CarouselContainer extends HTMLElement {
 
     if (this.childElementCount < 3) {
       this.nextButton.style.display = "none";
+      // Use setTimeOut with timer value is 0 to execute the callback
+      // after the code on main thread has finished.
+      // Here, CSS for carousel items is only updated after the items have been mounted
+      setTimeout(() => {
+        for (let carouselItem of this.children) {
+          carouselItem.shadowRoot
+            .querySelector(".carousel-item")
+            .classList.add("focused-item");
+        }
+      }, 0);
       return;
     }
     this.prevButton.onclick = () => {
