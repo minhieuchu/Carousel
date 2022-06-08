@@ -119,16 +119,29 @@ class CarouselContainer extends HTMLElement {
         2 * globalState.carouselItemWidth +
         2 * globalState.carouselMediumItemWidth +
         globalState.carouselFocusedItemWidth;
-    } else {
+    } else if (this.childElementCount > 2) {
       this.carouselWidth =
         2 * globalState.carouselItemGap +
         2 * globalState.carouselMediumItemWidth +
         globalState.carouselFocusedItemWidth;
+    } else {
+      this.carouselWidth =
+        this.childElementCount *
+        (globalState.carouselFocusedItemWidth + globalState.carouselItemGap);
     }
     this.slideDistance =
       globalState.carouselItemWidth + globalState.carouselItemGap;
   }
   connectedCallback() {
+    window.onresize = () => {
+      this.updateCarouselSize();
+    };
+    this.updateCarouselSize();
+
+    if (this.childElementCount < 3) {
+      this.nextButton.style.display = "none";
+      return;
+    }
     this.prevButton.onclick = () => {
       if (Date.now() - this.prevClickTime < 200) {
         return;
@@ -166,6 +179,9 @@ class CarouselContainer extends HTMLElement {
     if (this.childElementCount <= 5) {
       this.initialFocusedItemIndex = 2;
       this.numDisplayCarouselItems = 3;
+      if (this.childElementCount == 3) {
+        this.nextButton.style.display = "none";
+      }
     }
 
     this.childListObserver = new MutationObserver(
@@ -176,10 +192,6 @@ class CarouselContainer extends HTMLElement {
     setTimeout(() => {
       this.focusedItemIndexProxy.value = this.initialFocusedItemIndex;
     }, 100);
-    window.onresize = () => {
-      this.updateCarouselSize();
-    };
-    this.updateCarouselSize();
 
     // Scroll carousel by dragging
     this.carousel.onmousedown = (event) => {
@@ -284,8 +296,10 @@ class CarouselContainer extends HTMLElement {
   }
   updateCssPropertyValues() {
     const constructedStyleSheet = new CSSStyleSheet();
-    const globalState = store.getInstance().sizeState;
-    const styleSheetContent = `
+    let styleSheetContent;
+    if (this.childElementCount >= 3) {
+      const globalState = store.getInstance().sizeState;
+      styleSheetContent = `
       #carousel-container { width: ${this.carouselWidth}px }
       #carousel { gap: ${globalState.carouselItemGap}px }
       .arrow {
@@ -299,6 +313,12 @@ class CarouselContainer extends HTMLElement {
         right: ${globalState.slideButtonDistance}px;
       }
     `;
+    } else {
+      styleSheetContent = `
+        #carousel-container { width: ${this.carouselWidth}px }
+        #carousel { justify-content: space-around; }
+      `;
+    }
     constructedStyleSheet.replaceSync(styleSheetContent);
     this.shadowRoot.adoptedStyleSheets = [constructedStyleSheet];
   }
