@@ -79,8 +79,10 @@ class CarouselContainer extends HTMLElement {
     this.prevButton = this.shadowRoot.getElementById("prev-button");
     this.nextButton = this.shadowRoot.getElementById("next-button");
     this.carousel = this.shadowRoot.getElementById("carousel");
+    this.initialFocusedItemIndex = 2;
+    this.numDisplayCarouselItems = 3;
     this.focusedItemIndexProxy = new Proxy(
-      { value: 3 },
+      { value: this.initialFocusedItemIndex },
       {
         set(target, prop, newValue, _receiver) {
           if (prop != "value") {
@@ -111,15 +113,45 @@ class CarouselContainer extends HTMLElement {
   }
   calculateCarouselSizeParameters() {
     const globalState = store.getInstance().sizeState;
-    this.carouselWidth =
-      4 * globalState.carouselItemGap +
-      2 * globalState.carouselItemWidth +
-      2 * globalState.carouselMediumItemWidth +
-      globalState.carouselFocusedItemWidth;
+    if (this.childElementCount > 5) {
+      this.carouselWidth =
+        4 * globalState.carouselItemGap +
+        2 * globalState.carouselItemWidth +
+        2 * globalState.carouselMediumItemWidth +
+        globalState.carouselFocusedItemWidth;
+    } else if (this.childElementCount > 2) {
+      this.carouselWidth =
+        2 * globalState.carouselItemGap +
+        2 * globalState.carouselMediumItemWidth +
+        globalState.carouselFocusedItemWidth;
+    } else {
+      this.carouselWidth =
+        this.childElementCount *
+        (globalState.carouselFocusedItemWidth + globalState.carouselItemGap);
+    }
     this.slideDistance =
       globalState.carouselItemWidth + globalState.carouselItemGap;
   }
   connectedCallback() {
+    window.onresize = () => {
+      this.updateCarouselSize();
+    };
+    this.updateCarouselSize();
+
+    if (this.childElementCount < 3) {
+      this.nextButton.style.display = "none";
+      // Use setTimeOut with timer value is 0 to execute the callback
+      // after the code on main thread has finished.
+      // Here, CSS for carousel items is only updated after the items have been mounted
+      setTimeout(() => {
+        for (let carouselItem of this.children) {
+          carouselItem.shadowRoot
+            .querySelector(".carousel-item")
+            .classList.add("focused-item");
+        }
+      }, 0);
+      return;
+    }
     this.prevButton.onclick = () => {
       if (Date.now() - this.prevClickTime < 200) {
         return;
@@ -154,17 +186,21 @@ class CarouselContainer extends HTMLElement {
       }, slideTime);
     };
 
+    if (this.childElementCount > 5) {
+      this.initialFocusedItemIndex = 3;
+      this.numDisplayCarouselItems = 5;
+    } else if (this.childElementCount == 3) {
+      this.nextButton.style.display = "none";
+    }
+
     this.childListObserver = new MutationObserver(
       this.initFocusedCarouselItem.bind(this)
     );
     this.childListObserver.observe(this, { childList: true });
+
     setTimeout(() => {
-      this.focusedItemIndexProxy.value = 3;
-    }, 100);
-    window.onresize = () => {
-      this.updateCarouselSize();
-    };
-    this.updateCarouselSize();
+      this.focusedItemIndexProxy.value = this.initialFocusedItemIndex;
+    }, 0);
 
     // Scroll carousel by dragging
     this.carousel.onmousedown = (event) => {
@@ -192,8 +228,12 @@ class CarouselContainer extends HTMLElement {
       let numScrollableCarouselItemsLeft = Math.round(
         (this.carousel.scrollLeft + draggedDistance) / this.slideDistance
       );
-      if (numScrollableCarouselItemsLeft > this.childElementCount - 5) {
-        numScrollableCarouselItemsLeft = this.childElementCount - 5;
+      if (
+        numScrollableCarouselItemsLeft >
+        this.childElementCount - this.numDisplayCarouselItems
+      ) {
+        numScrollableCarouselItemsLeft =
+          this.childElementCount - this.numDisplayCarouselItems;
       }
       if (numScrollableCarouselItemsLeft < 0) {
         numScrollableCarouselItemsLeft = 0;
@@ -205,15 +245,20 @@ class CarouselContainer extends HTMLElement {
       this.carousel.style.scrollBehavior = "smooth";
       this.carousel.scrollBy(scrollableLeftDistance, 0);
       setTimeout(() => {
-        this.focusedItemIndexProxy.value = numScrollableCarouselItemsLeft + 3;
+        this.focusedItemIndexProxy.value =
+          numScrollableCarouselItemsLeft + this.initialFocusedItemIndex;
         // Show / Hide slide buttons
-        if (this.focusedItemIndexProxy.value <= 3) {
+        if (this.focusedItemIndexProxy.value <= this.initialFocusedItemIndex) {
           this.prevButton.style.display = "none";
         } else {
           this.prevButton.style.display = "block";
         }
 
-        if (this.focusedItemIndexProxy.value + 2 >= this.childElementCount) {
+        if (
+          this.focusedItemIndexProxy.value +
+            Math.floor(this.numDisplayCarouselItems / 2) >=
+          this.childElementCount
+        ) {
           this.nextButton.style.display = "none";
         } else {
           this.nextButton.style.display = "block";
@@ -222,10 +267,10 @@ class CarouselContainer extends HTMLElement {
     };
   }
   initFocusedCarouselItem() {
-    if (this.childElementCount < this.focusedItemIndexProxy.value + 2) {
+    if (this.childElementCount < this.numDisplayCarouselItems) {
       return;
     }
-    this.focusedItemIndexProxy.value = 3;
+    this.focusedItemIndexProxy.value = this.initialFocusedItemIndex;
   }
   updateFocusedItem(itemIndex, makeFocused = true) {
     const focusedCarouselItemHtml = this.children
@@ -253,16 +298,17 @@ class CarouselContainer extends HTMLElement {
   // At the moment, there is not a standard method to determine if the scroll has finished.
   // A common workaround is to use a timer (~500ms) to wait for the completion of the scroll action.
   getScrollLeftValue() {
-    const globalState = store.getInstance().sizeState;
     return (
-      (this.focusedItemIndexProxy.value - 3) *
-      (globalState.carouselItemWidth + globalState.carouselItemGap)
+      (this.focusedItemIndexProxy.value - this.initialFocusedItemIndex) *
+      this.slideDistance
     );
   }
   updateCssPropertyValues() {
     const constructedStyleSheet = new CSSStyleSheet();
-    const globalState = store.getInstance().sizeState;
-    const styleSheetContent = `
+    let styleSheetContent;
+    if (this.childElementCount >= 3) {
+      const globalState = store.getInstance().sizeState;
+      styleSheetContent = `
       #carousel-container { width: ${this.carouselWidth}px }
       #carousel { gap: ${globalState.carouselItemGap}px }
       .arrow {
@@ -276,6 +322,12 @@ class CarouselContainer extends HTMLElement {
         right: ${globalState.slideButtonDistance}px;
       }
     `;
+    } else {
+      styleSheetContent = `
+        #carousel-container { width: ${this.carouselWidth}px }
+        #carousel { justify-content: space-around; }
+      `;
+    }
     constructedStyleSheet.replaceSync(styleSheetContent);
     this.shadowRoot.adoptedStyleSheets = [constructedStyleSheet];
   }
