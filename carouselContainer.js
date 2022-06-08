@@ -111,11 +111,18 @@ class CarouselContainer extends HTMLElement {
   }
   calculateCarouselSizeParameters() {
     const globalState = store.getInstance().sizeState;
-    this.carouselWidth =
-      4 * globalState.carouselItemGap +
-      2 * globalState.carouselItemWidth +
-      2 * globalState.carouselMediumItemWidth +
-      globalState.carouselFocusedItemWidth;
+    if (this.childElementCount > 5) {
+      this.carouselWidth =
+        4 * globalState.carouselItemGap +
+        2 * globalState.carouselItemWidth +
+        2 * globalState.carouselMediumItemWidth +
+        globalState.carouselFocusedItemWidth;
+    } else {
+      this.carouselWidth =
+        2 * globalState.carouselItemGap +
+        2 * globalState.carouselMediumItemWidth +
+        globalState.carouselFocusedItemWidth;
+    }
     this.slideDistance =
       globalState.carouselItemWidth + globalState.carouselItemGap;
   }
@@ -158,8 +165,12 @@ class CarouselContainer extends HTMLElement {
       this.initFocusedCarouselItem.bind(this)
     );
     this.childListObserver.observe(this, { childList: true });
+    let initialFocusedItemIndex = 3;
+    if (this.childElementCount <= 5) {
+      initialFocusedItemIndex = 2;
+    }
     setTimeout(() => {
-      this.focusedItemIndexProxy.value = 3;
+      this.focusedItemIndexProxy.value = initialFocusedItemIndex;
     }, 100);
     window.onresize = () => {
       this.updateCarouselSize();
