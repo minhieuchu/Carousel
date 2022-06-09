@@ -35,8 +35,11 @@ const itemStyle = `
         display: flex;
         align-items: center;
         justify-content: center;
+        text-align: center;
+        padding: 5px;
         border-radius: 5px;
         backface-visibility: hidden;
+        box-sizing: border-box;
     }
 
     .carousel-item>.cards-container>.front-card {
