@@ -1,6 +1,21 @@
 # M-Carousel
 
+https://user-images.githubusercontent.com/25933120/173212344-24db82f1-4fd0-4dcc-895b-74bcb6a239ed.mov
+
 A simple carousel created with custom HTML elements.
+
+## Installation
+
+Install via NPM:
+
+```
+npm i m-carousel
+```
+
+Or via YARN:
+```
+yarn add m-carousel
+```
 
 ## Features
 
@@ -32,10 +47,6 @@ In the body, use the above defined custom elements like below. The output looks 
   <carousel-item front="3" back="Back card"></carousel-item>
 </carousel-container>
 ```
-
-## Example Result
-
-https://user-images.githubusercontent.com/25933120/173212344-24db82f1-4fd0-4dcc-895b-74bcb6a239ed.mov
 
 ## Browser Support
 
